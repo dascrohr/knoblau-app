@@ -19,6 +19,7 @@ export async function anmelden(_: { fehler: string } | null, form: FormData) {
 
 export async function abmelden() {
   const sb = await db();
-  await sb.auth.signOut();
+  // Nur dieses Gerät abmelden; andere Browser desselben Nutzers bleiben angemeldet.
+  await sb.auth.signOut({ scope: "local" });
   redirect("/login");
 }
