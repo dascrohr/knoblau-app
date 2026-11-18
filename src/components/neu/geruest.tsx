@@ -34,6 +34,9 @@ export function Geruest({ istAdmin, kopfRechts, children }: { istAdmin: boolean;
           {istAdmin ? (
             <>
               <div className="k-navtrenner" role="presentation" />
+              <Link href="/neu/geschaeftsleitung" className="k-navlink" aria-current={pfad.startsWith("/neu/geschaeftsleitung") ? "page" : undefined} onClick={zu}>
+                Geschäftsleitung
+              </Link>
               <Link href="/nutzer" className="k-navlink" onClick={zu}>
                 Nutzer
               </Link>
