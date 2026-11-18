@@ -97,6 +97,13 @@ Stand: 18.11.2026, 19:45 Uhr · letzter Commit beim Schreiben: `97b3293`
 **Druck** (`/druck/angebot/[id]`, `/druck/auftrag/[id]`, `/druck/rechnung/[id]`)
 - A4-Blatt im eigenen Layout mit Briefkopf, Anschriftfeld, Positionen, Summen, Texten, Fußzeile aus den Firmenangaben; PDF über den Druckdialog des Browsers. Vermerk „ENTWURF“ bei Entwürfen.
 
+**Geschäftsleitungs-Dashboard V1** (`/neu/geschaeftsleitung`, nur Administratoren; Branch `funktion/geschaeftsleitung-dashboard-v1`, noch nicht deployt)
+- Kennzahlen mit Datenstand und Vorjahresvergleich: Angebote (nach Angebotsdatum), Rechnungen (nach Rechnungsdatum), fakturierter Bruttobetrag mit Ø und Median, 180-Tage-Fakturierungsquote mit Zähler, Nenner und Ausschlüssen.
+- Zeitraum 2, 5, 10 Jahre oder frei; Monatsverlauf in zwei ausgerichteten Diagrammen; Tabelle „Ø, Median, Anzahl je Kalendermonat“.
+- Zwei Heatmaps mit gemeinsamer Farbskala, Detail je Zelle und Tabellenansicht: Saisonalität (Jahr × Monat) und Regionen (Land + PLZ2 × Kalendermonat, Belade- oder Entladestelle), dazu sortierbare Gebietsrangliste und Abstimmung mit der Gesamtübersicht.
+- Gerechnet wird auf dem Server (`src/lib/dashboard/rechnen.ts`, reine Funktionen); der Browser bekommt nur Summen und Zählungen. Keine Schemaänderung, keine externen Dienste.
+- Nicht enthalten (bewusst): Abschlussquote, gewonnene Aufträge, Ø-Auftragswert (kein belegter Auftragsstatus), Forecast, Potenzialanalyse, Wiedervorlagen.
+
 **Daten**
 - Import: 8.205 Angebote, 102.651 Angebotspositionen, 5.846 Rechnungen, 36.753 Rechnungspositionen, dazu Arbeitsscheine, Kasse, Halteverbotszonen, Checklisten, Umzugsgut, Stammdaten.
 - Der Import ist wiederholbar: In der App geänderte Angebote (`geaendert_von` gesetzt), neu angelegte Zeilen, bearbeitete Kunden und gepflegte Stammdaten bleiben erhalten.
@@ -115,6 +122,8 @@ Stand: 18.11.2026, 19:45 Uhr · letzter Commit beim Schreiben: `97b3293`
 | Route | Inland 37,6 km mit Karte; Ausland (Griechenland) 2.549 km |
 | Druckansichten, Anmeldeseite, Tablet-Breite 820 px | im Browser angesehen |
 
+| Dashboard-Kennzahlen | `npm run test`: 13 Tests mit synthetischen Daten (u. a. Tag 0 / 180 / 181 / keine Rechnung = 2 von 4, Jahreswechsel, zu junge Kohorte, mehrdeutige Nummern, fehlende Beträge, unbekanntes Land, führende PLZ-Nullen, Abstimmung Heatmaps = Gesamt, Zugriffsregel). `node --experimental-strip-types scripts/dashboard-pruefen.mjs`: 33 Vergleiche mit unabhängigen SQL-Zählungen auf dem Bestand für 2, 5 und 10 Jahre stimmen. Ohne Anmeldung: Umleitung auf den Login (lokal geprüft) |
+
 **Gebaut, aber nicht durchgeklickt:** die meisten Reiter einzeln; Stammdaten speichern; Kunden bearbeiten und anlegen; „Aus Kundenstamm“; Duplizieren; Textbausteine einfügen; Entwurf-Schalter; Firmenangaben speichern; Nutzer löschen; Passwort setzen und ändern; „Passwort vergessen“; automatisches Speichern nach Zeit und Pause nach 10 Minuten; Übergabe zwischen zwei verschiedenen Nutzern; echter Ausdruck auf Papier (Fußzeile bei mehreren Seiten, Fensterkuvert). Es gibt keine automatisierten Tests.
 
 ## 6. Wichtige Entscheidungen und Befunde
@@ -127,6 +136,14 @@ Stand: 18.11.2026, 19:45 Uhr · letzter Commit beim Schreiben: `97b3293`
 6. **Datensparsamkeit:** In `legacy` liegen nur 35 der 222 Alttabellen; Spalten mit Kennwörtern, Bankdaten und Schlüsseln werden beim Import geleert. Die vollständige SQLite-Datei bleibt auf dem Rechner des Auftraggebers und kommt nie ins Repository.
 7. **Kartendienst:** An openrouteservice gehen nur Adressen. Kartenkacheln lädt der Browser erst nach Klick auf „Route berechnen“ von openstreetmap.org.
 8. **Sitzung:** Cookies sind `httpOnly`. Die Anmeldung gilt je Domain getrennt.
+
+9. **Dashboard-Definitionen (V1, vom Inhaber zu bestätigen):**
+   - Datenstichtag = jüngstes Angebots- oder Rechnungsdatum im Bestand, höchstens heute.
+   - „Verlässliche Zuordnungsgrundlage“ = nicht leere, im Bestand nur einmal vergebene Angebotsnummer. Der Import hängt eine Rechnung über die Angebotsnummer an ein Angebot; bei doppelter Nummer wählt er technisch eine Zeile, das gilt nicht als eindeutig.
+   - Rund ein Drittel der Rechnungen der letzten zehn Jahre hat keine Angebotszuordnung. Sie zählen im Gesamtbetrag, aber in keinem Angebot als Treffer; die 180-Tage-Fakturierungsquote ist deshalb eher eine Untergrenze.
+   - Ein gespeicherter Betrag 0 ist ein gültiger Betrag (im Ø enthalten, eigens ausgewiesen); ein fehlender Betrag zählt als Rechnung, aber nicht im Betrag.
+   - Das Länderkennzeichen ist bei fast allen Adressen leer; die Gebiete heißen dann „Land unbekannt · PLZ nn“. Kleine Fallzahl = Nenner bzw. Anzahl unter 5.
+   - Gutschriften sind nicht importiert und mindern den fakturierten Betrag nicht.
 
 ## 7. Offen
 
@@ -177,6 +194,9 @@ Voraussetzung ist eine `.env.local` mit den Variablen aus Abschnitt 3 (liegt bei
 | Befehl | Zweck |
 | --- | --- |
 | `npx tsc --noEmit` und `npx eslint src` | Typen und Stil |
+| `npm run test` | Tests der Dashboard-Kennzahlen mit synthetischen Daten |
+| `node --experimental-strip-types scripts/dashboard-pruefen.mjs` | Dashboard gegen SQL-Zählungen auf dem Bestand (nur lesend, nur Zahlen) |
+| `DASHBOARD_DEMO=1 npm run dev` | Dashboard lokal mit erfundenen Daten (nur außerhalb der Produktion wirksam) |
 | `npx next build` | Produktions-Build |
 | `node scripts/sql.mjs <datei.sql>` | Migration oder SQL ausführen |
 | `node scripts/typen.mjs` | `src/lib/db-typen.ts` nach Schemaänderungen neu erzeugen |
@@ -190,6 +210,7 @@ Neueste Einträge oben. Jede Lieferung bekommt eine Zeile: Datum, was, wie gepr�
 
 | Datum | Änderung | Geprüft |
 | --- | --- | --- |
+| 18.11.2026 | Geschäftsleitungs-Dashboard V1 auf Branch `funktion/geschaeftsleitung-dashboard-v1` (eigener Pull Request, nicht deployt, keine Datenbankänderung) | 13 synthetische Tests, Abgleich mit SQL auf dem Bestand, Build; Browser-Prüfung siehe Pull Request |
 | 18.11.2026 | `ENTWICKLUNGSSTAND.md` und `AUFGABEN.md` angelegt; Filterlisten in den Import verschoben | – |
 | 18.11.2026 | Anmeldeseite im Knoblau-Design | im Browser, Desktop und Handy |
 | 18.11.2026 | Domain `knoblau.app`; Bearbeitungs-Übergabe mit automatischem Speichern; Speichern in einer Transaktion; Entwurf; Kunden bearbeiten und übernehmen; Duplizieren; Textbausteine; Firmenangaben; Auftragsbestätigung; Passwort ändern und zurücksetzen; `legacy` auf 35 Tabellen | Übergabe mit zwei Fenstern, Druck und Tablet-Breite im Browser; Rest nur geladen |

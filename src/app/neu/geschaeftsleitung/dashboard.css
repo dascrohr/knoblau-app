@@ -1,0 +1,96 @@
+/* Geschäftsleitungsübersicht. Alles unter .neu .gl; Farben und Abstände aus dem Designsystem (--k-*). */
+.neu .gl { display: flex; flex-direction: column; gap: var(--k-a4); }
+.neu .gl .gl-filter { display: flex; flex-wrap: wrap; align-items: center; gap: var(--k-a3) var(--k-a5); }
+.neu .gl .gl-frei { display: flex; flex-wrap: wrap; align-items: center; gap: var(--k-a2) var(--k-a3); font-size: var(--k-text-m); color: var(--k-text-2); }
+.neu .gl .gl-frei label { display: inline-flex; align-items: center; gap: var(--k-a2); }
+.neu .gl .gl-frei input { width: 10.5rem; }
+.neu .gl .gl-aktionen { display: flex; flex-wrap: wrap; gap: var(--k-a2); justify-content: flex-end; }
+
+/* Segment-Schalter auch für Knöpfe (im Designsystem bisher nur für Links) */
+.neu .gl .k-segment button { border: 0; background: transparent; font: inherit; font-size: var(--k-text-s); font-weight: 500; color: var(--k-text-2); padding: 0.3rem 0.75rem; border-radius: 999px; cursor: pointer; min-height: 2rem; }
+.neu .gl .k-segment button:hover { color: var(--k-text); }
+.neu .gl .k-segment button.k-segment-aktiv { background: var(--k-flaeche); color: var(--k-text); box-shadow: var(--k-schatten); }
+.neu .gl .k-segment button:focus-visible, .neu .gl .gl-sortierknopf:focus-visible, .neu .gl .gl-heat-zelle:focus-visible { outline: none; box-shadow: var(--k-fokus); position: relative; z-index: 2; }
+
+/* Kennzahlen */
+.neu .gl .gl-kennzahlen { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--k-a3); }
+@media (max-width: 1279px) { .neu .gl .gl-kennzahlen { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 599px) { .neu .gl .gl-kennzahlen { grid-template-columns: minmax(0, 1fr); } }
+.neu .gl .gl-kennzahl { background: var(--k-flaeche); border: 1px solid var(--k-rahmen); border-radius: var(--k-radius-gross); padding: var(--k-a4); box-shadow: var(--k-schatten); display: flex; flex-direction: column; gap: var(--k-a1); min-width: 0; }
+.neu .gl .gl-kennzahl h2 { font-size: var(--k-text-s); font-weight: 600; color: var(--k-text-2); margin: 0; text-transform: none; letter-spacing: 0; }
+.neu .gl .gl-wert { font-family: var(--k-schrift-titel); font-size: 1.75rem; font-weight: 600; line-height: 1.15; margin: 0; color: var(--k-text); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.neu .gl .gl-zusatz { font-size: var(--k-text-s); color: var(--k-text-2); }
+.neu .gl .gl-vergleich { font-size: var(--k-text-s); color: var(--k-text); margin: var(--k-a1) 0 0; padding-top: var(--k-a2); border-top: 1px solid var(--k-flaeche-3); font-variant-numeric: tabular-nums; }
+.neu .gl .gl-hilfe { font-size: var(--k-text-xs); color: var(--k-text-2); margin: var(--k-a1) 0 0; }
+.neu .gl .gl-absatz { font-size: var(--k-text-m); color: var(--k-text-2); margin: 0 0 var(--k-a3); max-width: 62rem; }
+.neu .gl .gl-absatz strong { color: var(--k-text); }
+.neu .gl .gl-zwischentitel { font-size: var(--k-text-l); font-weight: 600; margin: var(--k-a5) 0 var(--k-a2); }
+.neu .gl .gl-liste { margin: 0; padding-left: 1.2rem; font-size: var(--k-text-m); color: var(--k-text-2); display: grid; gap: var(--k-a1); font-variant-numeric: tabular-nums; }
+.neu .gl .gl-fuss { font-size: var(--k-text-xs); color: var(--k-text-3); margin: 0; }
+
+/* Tabellen */
+.neu .gl .gl-heat-rollen { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.neu .gl .gl-tabelle { width: 100%; border-collapse: collapse; font-size: var(--k-text-s); font-variant-numeric: tabular-nums; }
+.neu .gl .gl-tabelle-schmal { max-width: 54rem; }
+.neu .gl .gl-tabelle caption { text-align: left; font-size: var(--k-text-xs); color: var(--k-text-3); padding-bottom: var(--k-a2); caption-side: top; }
+.neu .gl .gl-tabelle th, .neu .gl .gl-tabelle td { padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--k-flaeche-3); text-align: left; white-space: nowrap; }
+.neu .gl .gl-tabelle thead th { font-size: var(--k-text-xs); font-weight: 600; color: var(--k-text-2); border-bottom: 1px solid var(--k-rahmen-stark); vertical-align: bottom; white-space: normal; }
+.neu .gl .gl-tabelle tbody th { font-weight: 500; color: var(--k-text); }
+.neu .gl .gl-tabelle .gl-r { text-align: right; }
+.neu .gl .gl-tabelle .gl-summe th, .neu .gl .gl-tabelle .gl-summe td { font-weight: 600; border-top: 1px solid var(--k-rahmen-stark); background: var(--k-flaeche-2); }
+.neu .gl .gl-tabelle .gl-spitze th, .neu .gl .gl-tabelle .gl-spitze td { font-weight: 600; background: var(--k-info-hell); }
+.neu .gl .gl-balkenzelle { width: 28%; min-width: 6rem; padding-left: 0; }
+.neu .gl .gl-balken { display: block; height: 0.6rem; background: #5a8fd2; border-radius: 0 3px 3px 0; min-width: 1px; }
+.neu .gl .gl-sortierknopf { border: 0; background: transparent; font: inherit; font-weight: 600; color: inherit; cursor: pointer; padding: 0.15rem 0.2rem; border-radius: 4px; text-align: inherit; }
+.neu .gl .gl-sortierknopf:hover { color: var(--k-text); background: var(--k-flaeche-3); }
+.neu .gl .gl-tabelle-klappe { margin-top: var(--k-a3); font-size: var(--k-text-s); }
+.neu .gl .gl-tabelle-klappe summary { cursor: pointer; color: var(--k-info); font-weight: 500; padding: 0.35rem 0; width: fit-content; }
+.neu .gl .gl-tabelle-klappe[open] summary { margin-bottom: var(--k-a2); }
+
+/* Monatsdiagramme */
+.neu .gl .gl-verlauf { display: flex; flex-direction: column; }
+.neu .gl .gl-diagramm { width: 100%; height: auto; display: block; overflow: visible; }
+.neu .gl .gl-diagramm-titel { font-size: var(--k-text-s); font-weight: 600; color: var(--k-text); margin: var(--k-a3) 0 var(--k-a1); }
+.neu .gl .gl-gitter { stroke: var(--k-flaeche-3); stroke-width: 1; }
+.neu .gl .gl-achse { font-size: 9.5px; fill: var(--k-text-3); font-variant-numeric: tabular-nums; }
+.neu .gl .gl-saeule { fill: #2c66b0; }
+.neu .gl .gl-saeule[data-teil="ja"] { fill: #94b6e6; }
+.neu .gl .gl-vorjahr { stroke: #282828; stroke-width: 1.5; }
+.neu .gl .gl-fadenkreuz { fill: var(--k-flaeche-3); }
+.neu .gl .gl-treffer { cursor: pointer; outline: none; }
+.neu .gl .gl-treffer:focus-visible { stroke: #1d4f8c; stroke-width: 1.5; }
+.neu .gl .gl-diagramm-legende { display: flex; flex-wrap: wrap; gap: var(--k-a2) var(--k-a4); font-size: var(--k-text-xs); color: var(--k-text-2); }
+.neu .gl .gl-diagramm-legende span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.neu .gl .gl-leg-saeule { width: 0.7rem; height: 0.7rem; background: #2c66b0; border-radius: 2px; display: inline-block; }
+.neu .gl .gl-leg-saeule[data-teil="ja"] { background: #94b6e6; }
+.neu .gl .gl-leg-vorjahr { width: 0.9rem; height: 0; border-top: 2px solid #282828; display: inline-block; }
+.neu .gl .gl-diagramm-detail { font-size: var(--k-text-s); color: var(--k-text); margin: var(--k-a2) 0 0; min-height: 2.6em; font-variant-numeric: tabular-nums; }
+
+/* Heatmap */
+.neu .gl .gl-heat { display: flex; flex-direction: column; gap: var(--k-a2); }
+.neu .gl .gl-heat-achse { display: flex; flex-wrap: wrap; gap: var(--k-a1) var(--k-a4); font-size: var(--k-text-xs); font-weight: 600; color: var(--k-text-2); }
+.neu .gl .gl-heat-raster { display: grid; gap: 2px; min-width: 46rem; }
+.neu .gl .gl-heat-reihe { display: contents; }
+.neu .gl .gl-heat-kopf { font-size: var(--k-text-xs); color: var(--k-text-2); text-align: center; padding-bottom: 2px; font-weight: 600; }
+.neu .gl .gl-heat-zeilentitel { font-size: var(--k-text-s); color: var(--k-text); display: flex; align-items: center; padding-right: var(--k-a3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.neu .gl .gl-heat-zelle { border: 0; border-radius: 3px; min-height: 2.25rem; font: inherit; font-size: var(--k-text-xs); font-variant-numeric: tabular-nums; color: #1f1f1f; cursor: pointer; padding: 0 2px; display: flex; align-items: center; justify-content: center; white-space: nowrap; }
+.neu .gl .gl-heat-zelle[data-dunkel="ja"] { color: #ffffff; }
+.neu .gl .gl-heat-zelle sup { font-size: 0.7em; margin-left: 1px; }
+.neu .gl .gl-heat-zelle[data-status="fehlt"], .neu .gl .gl-zeichen[data-status="fehlt"] { background: var(--k-flaeche); box-shadow: inset 0 0 0 1px var(--k-rahmen); color: var(--k-text-3); }
+.neu .gl .gl-heat-zelle[data-status="unreif"], .neu .gl .gl-zeichen[data-status="unreif"] { background: repeating-linear-gradient(135deg, #f4f4f4 0 5px, #e2e2e2 5px 10px); color: var(--k-text-2); }
+.neu .gl .gl-heat-zelle[data-status="ausserhalb"], .neu .gl .gl-zeichen[data-status="ausserhalb"] { background: transparent; box-shadow: inset 0 0 0 1px var(--k-flaeche-3); cursor: default; }
+.neu .gl .gl-heat-zelle[data-status="klein"], .neu .gl .gl-zeichen[data-status="klein"] { box-shadow: inset 0 0 0 1.5px #505050; }
+.neu .gl .gl-heat-zelle[data-teil="ja"], .neu .gl .gl-zeichen[data-teil="ja"] { border-bottom: 3px dotted #282828; }
+.neu .gl .gl-heat-zelle[aria-selected="true"] { box-shadow: 0 0 0 2px #282828; position: relative; z-index: 1; }
+.neu .gl .gl-heat-detail { font-size: var(--k-text-s); min-height: 3.2em; display: flex; flex-wrap: wrap; gap: 0.15rem 0.9rem; align-items: baseline; padding: var(--k-a2) var(--k-a3); background: var(--k-flaeche-2); border-radius: var(--k-radius); font-variant-numeric: tabular-nums; }
+.neu .gl .gl-heat-detail em { font-style: normal; color: var(--k-warnung); font-weight: 500; }
+.neu .gl .gl-heat-legende { display: flex; flex-wrap: wrap; gap: var(--k-a2) var(--k-a4); align-items: center; font-size: var(--k-text-xs); color: var(--k-text-2); }
+.neu .gl .gl-heat-legende > span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.neu .gl .gl-heat-skala { display: inline-flex; gap: 2px; }
+.neu .gl .gl-heat-skala i { width: 1.4rem; height: 0.8rem; display: block; border-radius: 2px; }
+.neu .gl .gl-zeichen { display: inline-flex; align-items: center; justify-content: center; min-width: 1.5rem; height: 1.2rem; border-radius: 3px; font-weight: 500; font-size: 0.7rem; color: #1f1f1f; padding: 0 3px; }
+.neu .gl .gl-mehr { margin: 0; }
+@media (max-width: 1023px) {
+  .neu .gl .gl-heat-zelle { min-height: 2.5rem; }
+  .neu .gl .gl-wert { font-size: 1.5rem; }
+}
