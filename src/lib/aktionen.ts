@@ -91,11 +91,11 @@ export async function speichereAngebot(e: AngebotSpeichern): Promise<Ergebnis<{ 
   const suchtext = [a.angebotnr, ...(adr ?? []).flatMap((x) => [x.name, x.vorname, x.name1, x.plz, x.ort, x.art === "auftraggeber" ? x.strasse : null])]
     .filter(Boolean).join(" ").toLowerCase();
   const jahr = a.angebotsdatum ? Number(String(a.angebotsdatum).slice(0, 4)) : a.jahr;
-  const { error } = await sb.from("angebote").update({ netto_summe: preis.nettoNachRabatt, suchtext, jahr, geaendert_am: new Date().toISOString(), geaendert_von: nutzer.id }).eq("id", id);
+  const { error } = await sb.from("angebote").update({ netto_summe: preis.nettoLeistungen, suchtext, jahr, geaendert_am: new Date().toISOString(), geaendert_von: nutzer.id }).eq("id", id);
   if (error) return fehler("Summen konnten nicht gespeichert werden.");
   revalidatePath("/alt", "layout");
   revalidatePath("/neu", "layout");
-  return { ok: true, daten: { netto: preis.nettoNachRabatt } };
+  return { ok: true, daten: { netto: preis.nettoLeistungen } };
 }
 
 /** Legt ein leeres Angebot mit der nächsten freien Nummer an (220 + JJMM + lfd. Nr.). */

@@ -61,7 +61,7 @@ select liste, wert, zusatz, sortierung from (
   select 'herkunft' as liste, pg_temp.t(herkunft) as wert, null::text as zusatz, min(_rowid)::int as sortierung
     from legacy.stamm_herkunft group by 2
   union all
-  select 'umzugsart', pg_temp.t(umzugsart), max(pg_temp.t(art)), min(_rowid)::int
+  select 'umzugsart', pg_temp.t(art), min(pg_temp.t(umzugsart)), min(pg_temp.n(umzugsart))::int   -- wert = Bezeichnung, zusatz = Kennziffer
     from (select * from legacy.f02_umzugsart union all select * from legacy.stamm_umzugsart) u group by 2
   union all
   select 'mwst', trim_scale(s)::text, null, (row_number() over (order by s desc))::int

@@ -32,16 +32,17 @@ export function runde2(x: number): number {
 const zahl = (x: number | null | undefined) => (typeof x === "number" && Number.isFinite(x) ? x : 0);
 
 /**
- * Gesamtpreis einer Zeile: Anzahl × Std/Stck × Einzelpreis, danach +/- Prozent.
- * Leere Anzahl bzw. leere Std/Stck zählen als 1 (in der Altsoftware bleiben die Felder oft leer).
+ * Gesamtpreis einer Zeile, so wie die Altsoftware rechnet (am Altbestand geprüft, siehe docs/preisformel-befund.md):
+ * Anzahl × Std/Stck × gerundeter Einzelpreis, wobei +/- Prozent vorher auf den Einzelpreis geschlagen wird.
+ * Leere Anzahl (oder 0) zählt als 1. Leere Std/Stck zählen als 0: ohne Std/Stck bleibt die Zeile bei 0.
  * Ohne Einzelpreis ist die Zeile ein Hinweistext und zählt 0.
  */
 export function zeilenSumme(p: Pick<PreisPosition, "anzahl" | "einheiten" | "einzelpreis" | "prozent">): number {
   const ep = zahl(p.einzelpreis);
   if (!ep) return 0;
   const anzahl = zahl(p.anzahl) || 1;
-  const einheiten = zahl(p.einheiten) || 1;
-  return runde2(anzahl * einheiten * ep * (1 + zahl(p.prozent) / 100));
+  const einheiten = zahl(p.einheiten);
+  return runde2(anzahl * einheiten * runde2(ep * (1 + zahl(p.prozent) / 100)));
 }
 
 export type PreisUebersicht = {
@@ -56,7 +57,8 @@ export type PreisUebersicht = {
   nebenleistungen: number;
   maut: number;
   netto: number; // Gesamtnettosumme vor Generalrabatt
-  rabatt: number; // abzügl. Generalmarge
+  nettoLeistungen: number; // Positionen + Klavier/Flügel/Schwergut, ohne Versicherung und Maut (entspricht NETTOSUM der Altsoftware)
+  rabatt: number; // abzügl. Generalmarge (positiv = Abzug)
   nettoNachRabatt: number;
   ustSatz: number;
   ust: number;
@@ -81,8 +83,9 @@ export function berechnePreis(kopf: PreisKopf, positionen: PreisPosition[]): Pre
   const maut = runde2(summe("maut") + (kopf.maut_in_angebot ? zahl(kopf.maut_gesamt) : 0));
   const transport = runde2(befoerdern + frei);
   const netto = runde2(beladen + transport + entladen + versicherung + besonderheiten + packmaterial + nebenleistungen + maut);
-  // Generalrabatt wirkt auf die Leistungen, nicht auf die Versicherung.
-  const rabatt = runde2(((netto - versicherung) * zahl(kopf.generalrabatt)) / 100);
+  const nettoLeistungen = runde2(netto - versicherung - maut);
+  // Generalmarge ist ein Prozentwert mit Vorzeichen (im Altbestand meist negativ = Rabatt). Sie wirkt nicht auf die Versicherung.
+  const rabatt = -runde2(((netto - versicherung) * zahl(kopf.generalrabatt)) / 100);
   const nettoNachRabatt = runde2(netto - rabatt);
   const ustSatz = kopf.ust_satz == null ? 19 : zahl(kopf.ust_satz);
   const mitVsst = zahl(kopf.versicherungssteuer) > 0 && versicherung > 0;
@@ -90,7 +93,7 @@ export function berechnePreis(kopf: PreisKopf, positionen: PreisPosition[]): Pre
   const ust = runde2((ustBasis * ustSatz) / 100);
   const vsst = mitVsst ? runde2((versicherung * VERSICHERUNGSSTEUER_SATZ) / 100) : 0;
   const gesamt = runde2(nettoNachRabatt + ust + vsst);
-  return { beladen, transport, befoerdern, frei, entladen, versicherung, besonderheiten, packmaterial, nebenleistungen, maut, netto, rabatt, nettoNachRabatt, ustSatz, ust, vsst, gesamt };
+  return { beladen, transport, befoerdern, frei, entladen, versicherung, besonderheiten, packmaterial, nebenleistungen, maut, netto, nettoLeistungen, rabatt, nettoNachRabatt, ustSatz, ust, vsst, gesamt };
 }
 
 const euro = new Intl.NumberFormat("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

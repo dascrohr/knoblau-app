@@ -37,6 +37,18 @@ export async function ladeLegacy(pgc, log = console.log) {
   const tabellen = s.all("select name from sqlite_master where type='table' and name not like 'sqlite_%' order by name").map((r) => r.name);
   await pgc.query("create schema if not exists legacy");
   let gesamt = 0, nichtLeer = 0;
+  let paket = [], paketGroesse = 0, paketTabellen = [];
+  const abschicken = async () => {
+    if (!paket.length) return;
+    const sql = paket.join(";\n"), namen = paketTabellen.join(", ");
+    paket = []; paketGroesse = 0; paketTabellen = [];
+    try { await pgc.query(sql); }
+    catch (e) { try { await pgc.query("rollback"); } catch {} throw new Error(`legacy (${namen}): ${e.message}`); }
+  };
+  const sende = async (sql, tabelle) => {
+    paket.push(sql); paketGroesse += sql.length; if (tabelle) paketTabellen.push(tabelle);
+    if (paketGroesse > 1_500_000) await abschicken();
+  };
   for (const t of tabellen) {
     const info = s.all(`pragma table_info(${q(t)})`);
     // Spaltennamen kleingeschrieben; bei Kollision (auch mit _rowid) Suffix anhängen.
@@ -60,24 +72,25 @@ export async function ladeLegacy(pgc, log = console.log) {
       }
     });
     const ziel = `legacy.${q(t)}`;
-    await pgc.query("begin");
-    try {
-      await pgc.query(`drop table if exists ${ziel} cascade`);
-      await pgc.query(`create table ${ziel} (_rowid integer primary key${spalten.map((sp) => `, ${q(sp.name)} ${sp.typ}`).join("")})`);
-      await pgc.query(`alter table ${ziel} enable row level security`);
-      const kopf = `insert into ${ziel} values `;
-      let teile = [], groesse = 0;
-      const spuele = async () => { if (teile.length) { await pgc.query(kopf + teile.join(",")); teile = []; groesse = 0; } };
-      for (const z of zeilen) {
-        const w = "(" + z.map((v, i) => (i > 0 && spalten[i - 1].typ === "text" && v !== null && typeof v !== "string" && !Buffer.isBuffer(v) ? lit(String(v)) : lit(v))).join(",") + ")";
-        teile.push(w); groesse += w.length;
-        if (groesse > 1_500_000 || teile.length >= 2000) await spuele();
-      }
-      await spuele();
-      await pgc.query("commit");
-    } catch (e) { await pgc.query("rollback"); throw new Error(`legacy.${t}: ${e.message}`); }
+    // Je Tabelle eine Transaktion (begin … commit). Die Anweisungen werden zu großen Paketen gebündelt,
+    // damit kleine/leere Tabellen nicht je fünf Netzwerk-Umläufe kosten.
+    await sende("begin");
+    await sende(`drop table if exists ${ziel} cascade`);
+    await sende(`create table ${ziel} (_rowid integer primary key${spalten.map((sp) => `, ${q(sp.name)} ${sp.typ}`).join("")})`);
+    await sende(`alter table ${ziel} enable row level security`);
+    const kopf = `insert into ${ziel} values `;
+    let teile = [], groesse = 0;
+    const spuele = async () => { if (teile.length) { await sende(kopf + teile.join(",")); teile = []; groesse = 0; } };
+    for (const z of zeilen) {
+      const w = "(" + z.map((v, i) => (i > 0 && spalten[i - 1].typ === "text" && v !== null && typeof v !== "string" && !Buffer.isBuffer(v) ? lit(String(v)) : lit(v))).join(",") + ")";
+      teile.push(w); groesse += w.length;
+      if (groesse > 500_000 || teile.length >= 2000) await spuele();
+    }
+    await spuele();
+    await sende("commit", t);
     gesamt += zeilen.length; if (zeilen.length) nichtLeer++;
   }
+  await abschicken();
   s.close();
   await pgc.query("revoke all on schema legacy from anon, authenticated, public");
   await pgc.query("revoke all on all tables in schema legacy from anon, authenticated, public");
