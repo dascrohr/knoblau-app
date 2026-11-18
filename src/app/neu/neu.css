@@ -318,7 +318,6 @@
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
-  min-width: 0;
 }
 .neu .k-label {
   font-size: var(--k-text-xs);
@@ -768,6 +767,7 @@
 }
 .neu .k-raster > * {
   grid-column: span 12;
+  min-width: 0;
 }
 @media (min-width: 640px) {
   .neu .k-raster > .k-s2 { grid-column: span 2; }
@@ -783,4 +783,22 @@
 @media (max-width: 639px) {
   .neu .k-raster > .k-s2,
   .neu .k-raster > .k-s3 { grid-column: span 6; }
+}
+
+/* Aufklappbare Karte (details) */
+.neu details.k-karte > summary {
+  list-style: none;
+}
+.neu details.k-karte > summary::-webkit-details-marker {
+  display: none;
+}
+.neu details.k-karte > summary .k-karte-titel::before {
+  content: "▸ ";
+  color: var(--k-text-3);
+}
+.neu details.k-karte[open] > summary .k-karte-titel::before {
+  content: "▾ ";
+}
+.neu details.k-karte:not([open]) > summary {
+  border-bottom: 0;
 }

@@ -1,5 +1,5 @@
 "use client";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { RoutenBlock } from "@/components/neu/karte";
 import { BEREICH_ZEILEN, type AdressArt, type Adresse, type Angebot, type Position } from "@/lib/angebot-typen";
 import { formatDatum } from "@/lib/preis";
@@ -24,6 +24,8 @@ export const Transport = memo(function Transport({ angebot, adressen, positionen
   const e = adressen.entladestelle;
   const maut = positionenVon(positionen, "maut");
   const mautAendern = useCallback((zeile: number, a: Partial<Position>) => setzer.positionen((l) => aenderePosition(l, "maut", zeile, a)), [setzer]);
+  // Nur der Anfangszustand: danach klappt der Nutzer selbst auf und zu.
+  const [mautOffen] = useState(() => angebot.maut_in_angebot || maut.length > 0 || !!angebot.maut_gesamt);
   const mautEntfernen = useCallback((zeile: number) => setzer.positionen((l) => entfernePosition(l, "maut", zeile)), [setzer]);
   return (
     <div id="transport" className="k-abschnitt flex flex-col gap-4">
@@ -48,10 +50,10 @@ export const Transport = memo(function Transport({ angebot, adressen, positionen
       <Block bereich="beladen" name="Beladen" positionen={positionen} setzer={setzer} />
       <Block bereich="befoerdern" name="Befördern" positionen={positionen} setzer={setzer} />
       <Block bereich="entladen" name="Entladen" positionen={positionen} setzer={setzer} />
-      <details className="k-karte" open={angebot.maut_in_angebot || maut.length > 0 || undefined}>
+      <details className="k-karte" open={mautOffen}>
         <summary className="k-karte-kopf cursor-pointer">
           <span className="k-karte-titel">Mautberechnung</span>
-          <span className="k-leise">{angebot.maut_in_angebot ? "wird im Angebot berechnet" : "aufklappen"}</span>
+          <span className="k-leise">{angebot.maut_in_angebot ? "wird im Angebot berechnet" : "nicht im Angebot"}</span>
         </summary>
         <div className="k-karte-inhalt flex flex-col gap-4">
           <div className="flex flex-wrap gap-x-6 gap-y-1">
