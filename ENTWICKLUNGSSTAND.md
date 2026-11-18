@@ -122,7 +122,7 @@ Stand: 18.11.2026, 19:45 Uhr · letzter Commit beim Schreiben: `97b3293`
 | Route | Inland 37,6 km mit Karte; Ausland (Griechenland) 2.549 km |
 | Druckansichten, Anmeldeseite, Tablet-Breite 820 px | im Browser angesehen |
 
-| Dashboard-Kennzahlen | `npm run test`: 13 Tests mit synthetischen Daten (u. a. Tag 0 / 180 / 181 / keine Rechnung = 2 von 4, Jahreswechsel, zu junge Kohorte, mehrdeutige Nummern, fehlende Beträge, unbekanntes Land, führende PLZ-Nullen, Abstimmung Heatmaps = Gesamt, Zugriffsregel). `node --experimental-strip-types scripts/dashboard-pruefen.mjs`: 33 Vergleiche mit unabhängigen SQL-Zählungen auf dem Bestand für 2, 5 und 10 Jahre stimmen. Ohne Anmeldung: Umleitung auf den Login (lokal geprüft) |
+| Dashboard-Kennzahlen | `npm run test`: 13 Tests mit synthetischen Daten (u. a. Tag 0 / 180 / 181 / keine Rechnung = 2 von 4, Jahreswechsel, zu junge Kohorte, mehrdeutige Nummern, fehlende Beträge, unbekanntes Land, führende PLZ-Nullen, Abstimmung Heatmaps = Gesamt, Zugriffsregel). `node --experimental-strip-types scripts/dashboard-pruefen.mjs`: 33 Vergleiche mit unabhängigen SQL-Zählungen auf dem Bestand für 2, 5 und 10 Jahre stimmen. Ohne Anmeldung: Umleitung auf den Login (lokal geprüft). Im Browser lokal mit erfundenen Demo-Daten als Administrator: Zeitraumwechsel, Vorjahresvergleich, beide Heatmaps mit Detail per Klick und Tastatur, Rangliste, Tablet 820 px. Nicht geprüft: Aufruf als regulärer Nutzer mit echtem Konto, echte Daten im Browser |
 
 **Gebaut, aber nicht durchgeklickt:** die meisten Reiter einzeln; Stammdaten speichern; Kunden bearbeiten und anlegen; „Aus Kundenstamm“; Duplizieren; Textbausteine einfügen; Entwurf-Schalter; Firmenangaben speichern; Nutzer löschen; Passwort setzen und ändern; „Passwort vergessen“; automatisches Speichern nach Zeit und Pause nach 10 Minuten; Übergabe zwischen zwei verschiedenen Nutzern; echter Ausdruck auf Papier (Fußzeile bei mehreren Seiten, Fensterkuvert). Es gibt keine automatisierten Tests.
 
@@ -210,7 +210,7 @@ Neueste Einträge oben. Jede Lieferung bekommt eine Zeile: Datum, was, wie gepr�
 
 | Datum | Änderung | Geprüft |
 | --- | --- | --- |
-| 18.11.2026 | Geschäftsleitungs-Dashboard V1 auf Branch `funktion/geschaeftsleitung-dashboard-v1` (eigener Pull Request, nicht deployt, keine Datenbankänderung) | 13 synthetische Tests, Abgleich mit SQL auf dem Bestand, Build; Browser-Prüfung siehe Pull Request |
+| 18.11.2026 | Geschäftsleitungs-Dashboard V1 auf Branch `funktion/geschaeftsleitung-dashboard-v1` (eigener Pull Request, nicht deployt, keine Datenbankänderung) | 13 synthetische Tests, Abgleich mit SQL auf dem Bestand, Build, Browser lokal mit Demo-Daten (auch Tablet 820 px) |
 | 18.11.2026 | `ENTWICKLUNGSSTAND.md` und `AUFGABEN.md` angelegt; Filterlisten in den Import verschoben | – |
 | 18.11.2026 | Anmeldeseite im Knoblau-Design | im Browser, Desktop und Handy |
 | 18.11.2026 | Domain `knoblau.app`; Bearbeitungs-Übergabe mit automatischem Speichern; Speichern in einer Transaktion; Entwurf; Kunden bearbeiten und übernehmen; Duplizieren; Textbausteine; Firmenangaben; Auftragsbestätigung; Passwort ändern und zurücksetzen; `legacy` auf 35 Tabellen | Übergabe mit zwei Fenstern, Druck und Tablet-Breite im Browser; Rest nur geladen |

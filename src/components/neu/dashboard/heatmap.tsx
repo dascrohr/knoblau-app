@@ -53,7 +53,7 @@ export function Heatmap({ titel, zeilenTitel, spaltenTitel, spalten, zeilen, max
         <span>→ {spaltenTitel}</span>
       </div>
       <div className="gl-heat-rollen">
-        <div className="gl-heat-raster" role="grid" aria-label={titel} style={{ gridTemplateColumns: `minmax(9.5rem, max-content) repeat(${spalten.length}, minmax(3.1rem, 1fr))` }}>
+        <div className="gl-heat-raster" role="grid" aria-label={titel} style={{ gridTemplateColumns: `minmax(var(--gl-titelspalte, 9.5rem), max-content) repeat(${spalten.length}, minmax(var(--gl-zelle, 3.1rem), 1fr))` }}>
           <div role="row" className="gl-heat-reihe">
             <span role="columnheader" className="gl-heat-ecke" />
             {spalten.map((s) => (
@@ -78,7 +78,7 @@ export function Heatmap({ titel, zeilenTitel, spaltenTitel, spalten, zeilen, max
                     aria-selected={istAktiv}
                     aria-label={`${z.titel}, ${spalten[si]}: ${c.detail.join("; ")}${STATUS_TEXT[c.status] ? ` (${STATUS_TEXT[c.status]})` : ""}`}
                     style={stufe >= 0 ? { background: STUFEN[stufe] } : undefined}
-                    onClick={() => setAktiv(istAktiv ? null : { z: zi, s: si })}
+                    onClick={() => setAktiv({ z: zi, s: si })} // immer auswählen: beim Tippen kommt erst „mouseenter“, dann „click“
                     onMouseEnter={() => setAktiv({ z: zi, s: si })}
                     onFocus={() => setAktiv({ z: zi, s: si })}
                   >

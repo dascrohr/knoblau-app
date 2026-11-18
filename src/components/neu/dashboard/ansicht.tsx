@@ -94,11 +94,14 @@ export function DashboardAnsicht({ daten: d, auswahl, geladenUm, fruehestes }: P
   // ---------------------------------------------------------------- Regionen: Gebiet × Kalendermonat
   const regionen = useMemo(() => {
     const quelle = alleGebiete ? d.regionen.zeilen : d.regionen.zeilen.slice(0, 15);
+    // Kalendermonate, in die kein Tag des Zeitraums fällt (z. B. Dezember in einem laufenden Jahr), sind keine echte Null.
+    const monatImZeitraum = Array.from({ length: 12 }, (_, i) => d.saison.some((c) => c.monat === i + 1 && c.lage !== "ausserhalb"));
     const zeilen: HeatZeile[] = quelle.map((g) => ({
       schluessel: g.schluessel,
       titel: g.label,
       zellen: g.monate.map((c, i): HeatZelle => {
         const monat = `${MONATE_LANG[i]} ${jahreText}${mehrereJahre ? " (gleiche Kalendermonate zusammengefasst)" : ""}`;
+        if (!monatImZeitraum[i]) return { status: "ausserhalb", wert: null, anzeige: "", detail: [monat] };
         if (regionKennzahl === "quote") return quoteZelle(c.quote, c.angebote, `Angebotsmonat ${monat}`, z.kleineFallzahl);
         if (regionKennzahl === "angebote") return { status: "wert", wert: c.angebote, anzeige: zahl(c.angebote), detail: [`${zahl(c.angebote)} Angebote`, `Angebotsmonat ${monat}`, `Fallzahl ${zahl(c.angebote)}`] };
         const fall = `${zahl(c.rechnungen)} eindeutig zugeordnete Rechnungen, ${zahl(c.gueltig)} mit gültigem Betrag`;

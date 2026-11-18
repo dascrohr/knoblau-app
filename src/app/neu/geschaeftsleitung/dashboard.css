@@ -91,6 +91,9 @@
 .neu .gl .gl-zeichen { display: inline-flex; align-items: center; justify-content: center; min-width: 1.5rem; height: 1.2rem; border-radius: 3px; font-weight: 500; font-size: 0.7rem; color: #1f1f1f; padding: 0 3px; }
 .neu .gl .gl-mehr { margin: 0; }
 @media (max-width: 1023px) {
+  /* Tablet: zwölf Monate ohne Querrollen bei 820 px Breite */
+  .neu .gl .gl-heat-raster { min-width: 40rem; --gl-zelle: 2.55rem; --gl-titelspalte: 8.5rem; }
+  .neu .gl .gl-heat-zeilentitel { font-size: var(--k-text-xs); padding-right: var(--k-a2); }
   .neu .gl .gl-heat-zelle { min-height: 2.5rem; }
   .neu .gl .gl-wert { font-size: 1.5rem; }
 }
