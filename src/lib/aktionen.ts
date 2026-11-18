@@ -182,7 +182,6 @@ export async function nutzerAendern(id: string, werte: { aktiv?: boolean; rolle?
   if (werte.rolle === "admin" || werte.rolle === "nutzer") aenderung.rolle = werte.rolle;
   const { error } = await admin.from("profile").update(aenderung).eq("id", id);
   if (error) return fehler("Änderung konnte nicht gespeichert werden.");
-  if (werte.aktiv === false) await admin.auth.admin.signOut(id).catch(() => undefined);
   revalidatePath("/nutzer");
   return { ok: true, daten: undefined };
 }

@@ -8,6 +8,7 @@ export async function proxy(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
     {
+      cookieOptions: { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" },
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (liste) => {
@@ -26,11 +27,6 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.search = "";
-    return NextResponse.redirect(url);
-  }
-  if (data.user && istLogin) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/neu";
     return NextResponse.redirect(url);
   }
   response.headers.set("Cache-Control", "private, no-store");

@@ -210,6 +210,16 @@ async function geokodiere(a: AdressEingabe, name: string, signal: AbortSignal): 
     }
   }
   if (grob) return grob;
+  // Letzter Versuch für Auslandsumzüge ohne Länderkennzeichen: europaweit suchen, Ergebnis gilt als ungenau.
+  if (!land) {
+    const weit = new URLSearchParams({ text: [ort, plz].filter(Boolean).join(" ").replace(/[\/|]/g, " "), lang: "de", size: "1", layers: "locality,localadmin,postalcode,county,region" });
+    try {
+      const t = features(await ruf(`${ORS_PFAD_SUCHE}?${weit}`, { method: "GET" }, signal)).map(zuTreffer).find(Boolean);
+      if (t) return { lon: t.lon, lat: t.lat, label: t.label, genau: false };
+    } catch (e) {
+      if (e instanceof KartenFehler) throw e;
+    }
+  }
   throw nichtGefunden;
 }
 

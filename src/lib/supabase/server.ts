@@ -8,6 +8,7 @@ export async function db() {
   const jar = await cookies();
   return createServerClient(SUPABASE_URL, SUPABASE_KEY, {
     db: { schema: "app" },
+    cookieOptions: { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax" },
     cookies: {
       getAll: () => jar.getAll(),
       setAll: (liste) => {

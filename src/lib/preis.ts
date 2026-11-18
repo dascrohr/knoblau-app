@@ -85,7 +85,7 @@ export function berechnePreis(kopf: PreisKopf, positionen: PreisPosition[]): Pre
   const netto = runde2(beladen + transport + entladen + versicherung + besonderheiten + packmaterial + nebenleistungen + maut);
   const nettoLeistungen = runde2(netto - versicherung - maut);
   // Generalmarge ist ein Prozentwert mit Vorzeichen (im Altbestand meist negativ = Rabatt). Sie wirkt nicht auf die Versicherung.
-  const rabatt = -runde2(((netto - versicherung) * zahl(kopf.generalrabatt)) / 100);
+  const rabatt = -runde2(((netto - versicherung) * zahl(kopf.generalrabatt)) / 100) || 0; // || 0 vermeidet "-0,00"
   const nettoNachRabatt = runde2(netto - rabatt);
   const ustSatz = kopf.ust_satz == null ? 19 : zahl(kopf.ust_satz);
   const mitVsst = zahl(kopf.versicherungssteuer) > 0 && versicherung > 0;

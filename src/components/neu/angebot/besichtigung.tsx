@@ -67,7 +67,7 @@ export const Besichtigung = memo(function Besichtigung({ angebot, setzer, listen
             <Feld className="k-s4" label="Gewicht" wert={angebot.gewicht} onWert={k("gewicht")} />
             <Feld className="k-s8" label="Umzugsart" wert={angebot.umzugsart} onWert={k("umzugsart")} vorschlaege={listen.umzugsart} />
             <Feld label="Zahlungsbedingung" wert={angebot.zahlungsbedingung} onWert={k("zahlungsbedingung")} vorschlaege={listen.zahlungsbedingung} />
-            <Zahlfeld className="k-s6" label="Umsatzsteuer" einheit="%" wert={angebot.ust_satz} onWert={(w) => setzer.kopf({ ust_satz: w ?? 0 })} list="k-ust-saetze" />
+            <Zahlfeld className="k-s6" label="Umsatzsteuer" einheit="%" wert={angebot.ust_satz} onWert={(w) => setzer.kopf({ ust_satz: w ?? 19 })} list="k-ust-saetze" />
             <Zahlfeld className="k-s6" label="Generalrabatt" einheit="%" wert={angebot.generalrabatt} onWert={k("generalrabatt")} />
             <datalist id="k-ust-saetze">
               {listen.mwst.map((m) => (

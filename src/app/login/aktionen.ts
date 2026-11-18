@@ -7,9 +7,9 @@ export async function anmelden(_: { fehler: string } | null, form: FormData) {
   const passwort = String(form.get("passwort") ?? "");
   if (!email || !passwort) return { fehler: "Bitte E-Mail und Passwort eingeben." };
   const sb = await db();
-  const { error } = await sb.auth.signInWithPassword({ email, password: passwort });
-  if (error) return { fehler: "Anmeldung fehlgeschlagen. Bitte E-Mail und Passwort prüfen." };
-  const { data: p } = await sb.from("profile").select("aktiv").maybeSingle();
+  const { data: anmeldung, error } = await sb.auth.signInWithPassword({ email, password: passwort });
+  if (error || !anmeldung.user) return { fehler: "Anmeldung fehlgeschlagen. Bitte E-Mail und Passwort prüfen." };
+  const { data: p } = await sb.from("profile").select("aktiv").eq("id", anmeldung.user.id).maybeSingle();
   if (!p?.aktiv) {
     await sb.auth.signOut();
     return { fehler: "Dieses Konto ist nicht freigeschaltet. Bitte an den Admin wenden." };
