@@ -38,6 +38,15 @@ Verbindliche Quelle für Tabellen und Spalten ist `supabase/migrations/0001_grun
 - **Keine Felder** für Bankdaten, Kennwörter, API-Schlüssel.
 - **Suche.** `suchtext` (kleingeschrieben) mit Trigram-Index auf Angeboten, Kunden und Rechnungen.
 
+## Bearbeitung, Entwurf, Einstellungen (Migration 0004)
+
+- **`angebote.version`** zählt bei jedem Speichern hoch. Die Maske schickt die geladene Version mit; passt sie nicht mehr, lehnt die Datenbank das Speichern ab (kein stilles Überschreiben).
+- **`angebote.entwurf`** markiert unfertige Angebote (Liste, Druck-Vermerk).
+- **`angebot_sperren`**: eine Zeile je gerade bearbeitetem Angebot (Nutzer, Fenster-Kennung, letztes Lebenszeichen). Läuft nach 60 s ohne Lebenszeichen ab. Geschrieben nur über die Funktion `app.sperre(angebot, sitzung, modus)`; Ablauf und Regeln stehen in `src/lib/bearbeitung.ts`.
+- **`app.angebot_speichern(id, sitzung, version, daten)`** speichert Kopf, Adressen, Positionen, Termine und Checkliste in einer Transaktion.
+- **`einstellungen`** (Schlüssel/Wert): Firmenangaben für Briefkopf und Fußzeile, feste Drucktexte. Lesen alle, ändern nur Admin. Schlüssel siehe `src/lib/firma.ts`.
+- **`legacy`** enthält nur noch die 35 Tabellen aus `LEGACY_TABELLEN` (`scripts/import/legacy.mjs`); der Rest bleibt in der SQLite-Datei.
+
 ## Import-Mapping
 
 Wiederholen: `npm run import` (alles), `npm run import -- --nur-app` (nur `legacy` → `app`), `npm run import -- --nur-legacy`. Prüfen: `node scripts/import/pruefen.mjs`. Code: `scripts/import/` (`legacy.mjs` lädt SQLite 1:1, `sql/*.sql` füllt `app` in Dateireihenfolge).

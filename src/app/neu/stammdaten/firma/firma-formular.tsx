@@ -55,7 +55,7 @@ export function FirmaFormular({ werte, darfSpeichern }: { werte: Werte; darfSpei
       }}
     >
       {darfSpeichern ? (
-        <Hinweis>Ein geleertes Feld fällt nach dem Speichern auf die Vorgabe zurück (Felder ohne Vorgabe bleiben leer).</Hinweis>
+        <Hinweis>Leere Felder werden im Ausdruck weggelassen.</Hinweis>
       ) : (
         <Hinweis art="warnung">Nur der Admin darf die Firmenangaben ändern. Sie sehen die Angaben hier zur Ansicht.</Hinweis>
       )}

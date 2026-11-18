@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SperrAntwort, SperrModus } from "./angebot-typen";
 
-export const LEBENSZEICHEN_S = 10;
+export const LEBENSZEICHEN_S = 6;
 export const ANSICHT_ABFRAGE_S = 12;
 export const ANFRAGE_WARTEN_S = 15;
 export const LEERLAUF_MIN = 10;
