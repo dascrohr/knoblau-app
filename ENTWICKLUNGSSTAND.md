@@ -2,7 +2,7 @@
 
 **Diese Datei ist der Einstieg für jeden Menschen und jeden KI-Agenten, der an diesem Projekt arbeitet.** Sie hält fest, was gebaut ist, wie es geprüft wurde, was offen ist und was als Nächstes kommt. Wer etwas ändert, aktualisiert sie im selben Commit.
 
-Stand: 18.11.2026, 19:45 Uhr · letzter Commit beim Schreiben: `97b3293`
+Stand: 18.11.2026, 23:15 Uhr
 
 ## 1. Wie mit diesem Repository gearbeitet wird
 
@@ -97,7 +97,7 @@ Stand: 18.11.2026, 19:45 Uhr · letzter Commit beim Schreiben: `97b3293`
 **Druck** (`/druck/angebot/[id]`, `/druck/auftrag/[id]`, `/druck/rechnung/[id]`)
 - A4-Blatt im eigenen Layout mit Briefkopf, Anschriftfeld, Positionen, Summen, Texten, Fußzeile aus den Firmenangaben; PDF über den Druckdialog des Browsers. Vermerk „ENTWURF“ bei Entwürfen.
 
-**Geschäftsleitungs-Dashboard V1** (`/neu/geschaeftsleitung`, nur Administratoren; Branch `funktion/geschaeftsleitung-dashboard-v1`, noch nicht deployt)
+**Geschäftsleitungs-Dashboard V1** (`/neu/geschaeftsleitung`, nur Administratoren; mit Pull Request #2 zusammengeführt und am 18.11.2026 auf Freigabe des Auftraggebers deployt)
 - Kennzahlen mit Datenstand und Vorjahresvergleich: Angebote (nach Angebotsdatum), Rechnungen (nach Rechnungsdatum), fakturierter Bruttobetrag mit Ø und Median, 180-Tage-Fakturierungsquote mit Zähler, Nenner und Ausschlüssen.
 - Zeitraum 2, 5, 10 Jahre oder frei; Monatsverlauf in zwei ausgerichteten Diagrammen; Tabelle „Ø, Median, Anzahl je Kalendermonat“.
 - Zwei Heatmaps mit gemeinsamer Farbskala, Detail je Zelle und Tabellenansicht: Saisonalität (Jahr × Monat) und Regionen (Land + PLZ2 × Kalendermonat, Belade- oder Entladestelle), dazu sortierbare Gebietsrangliste und Abstimmung mit der Gesamtübersicht.
@@ -210,6 +210,7 @@ Neueste Einträge oben. Jede Lieferung bekommt eine Zeile: Datum, was, wie gepr�
 
 | Datum | Änderung | Geprüft |
 | --- | --- | --- |
+| 18.11.2026 | Pull Request #2 zusammengeführt, Dashboard V1 live (Freigabe des Auftraggebers: „Bitte live gehen“) | siehe A-015 in `AUFGABEN.md` |
 | 18.11.2026 | Geschäftsleitungs-Dashboard V1 auf Branch `funktion/geschaeftsleitung-dashboard-v1` (eigener Pull Request, nicht deployt, keine Datenbankänderung) | 13 synthetische Tests, Abgleich mit SQL auf dem Bestand, Build, Browser lokal mit Demo-Daten (auch Tablet 820 px) |
 | 18.11.2026 | `ENTWICKLUNGSSTAND.md` und `AUFGABEN.md` angelegt; Filterlisten in den Import verschoben | – |
 | 18.11.2026 | Anmeldeseite im Knoblau-Design | im Browser, Desktop und Handy |
