@@ -1,3 +1,8 @@
+# Für alle Agenten
+
+Lies zuerst `ENTWICKLUNGSSTAND.md` (Stand, Regeln, nächste Schritte) und `AUFGABEN.md` (Eingang für Aufträge und Vorschläge).
+Keine Personendaten und keine Schlüssel ins Repository. Nach jeder Lieferung `ENTWICKLUNGSSTAND.md` aktualisieren.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know
