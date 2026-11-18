@@ -1,6 +1,6 @@
 "use client";
 import { useActionState, useState, useTransition } from "react";
-import { nutzerAendern, nutzerAnlegen, nutzerLoeschen } from "@/lib/aktionen";
+import { nutzerAendern, nutzerAnlegen, nutzerLoeschen, nutzerPasswortSetzen } from "@/lib/aktionen";
 
 const feld = "rounded-md border border-neutral-300 px-3 py-2 font-normal outline-none focus:border-neutral-900";
 
@@ -42,6 +42,22 @@ export function NutzerZeile({ nutzer, istIch }: { nutzer: { id: string; email: s
           <button
             disabled={laeuft}
             onClick={() => {
+              const neu = window.prompt(`Neues Startpasswort für ${nutzer.email} (mindestens 12 Zeichen). Bitte persönlich weitergeben; der Nutzer kann es danach unter „Mein Konto“ ändern.`);
+              if (neu == null) return;
+              start(async () => {
+                const e = await nutzerPasswortSetzen(nutzer.id, neu);
+                setMeldung(e.ok ? "Neues Passwort gesetzt." : e.fehler);
+              });
+            }}
+            className="ml-2 rounded border border-neutral-300 px-2 py-1 text-xs disabled:opacity-60"
+          >
+            Passwort setzen
+          </button>
+        )}
+        {!istIch && (
+          <button
+            disabled={laeuft}
+            onClick={() => {
               if (!window.confirm(`Nutzer ${nutzer.email} endgültig löschen? Die Anmeldung ist danach nicht mehr möglich. Gespeicherte Angebote bleiben erhalten.`)) return;
               start(async () => {
                 const e = await nutzerLoeschen(nutzer.id);
@@ -53,7 +69,7 @@ export function NutzerZeile({ nutzer, istIch }: { nutzer: { id: string; email: s
             Löschen
           </button>
         )}
-        {meldung && <span role="alert" className="ml-2 text-xs text-red-800">{meldung}</span>}
+        {meldung && <span role="status" className="ml-2 text-xs text-neutral-800">{meldung}</span>}
       </td>
     </tr>
   );

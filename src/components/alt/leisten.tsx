@@ -24,6 +24,10 @@ export function Symbolleiste(p: {
   speichernAktiv?: boolean;
   onBearbeiten?: () => void;
   inBearbeitung?: boolean;
+  bearbeitenText?: string;
+  bearbeitenAus?: boolean;
+  /** „Fertig“: speichern und Bearbeitung beenden (nur im Bearbeitungsmodus aktiv). */
+  onFertig?: () => void;
   onLoeschen?: () => void;
   loeschenHinweis?: string;
   darfWeg?: () => boolean;
@@ -59,7 +63,8 @@ export function Symbolleiste(p: {
       <span className="trenn" />
       <button type="button" className="knopf" onClick={neu} disabled={laeuft}>{laeuft ? "Neu …" : "Neu"}</button>
       <button type="button" className="knopf" onClick={p.onSpeichern} disabled={!p.onSpeichern || !p.speichernAktiv}>Speichern</button>
-      <button type="button" className={"knopf" + (p.inBearbeitung ? " gedrueckt" : "")} onClick={p.onBearbeiten} disabled={!p.onBearbeiten} aria-pressed={p.onBearbeiten ? !!p.inBearbeitung : undefined}>Bearbeiten</button>
+      <button type="button" className={"knopf" + (p.inBearbeitung ? " gedrueckt" : "")} onClick={p.onBearbeiten} disabled={!p.onBearbeiten || p.bearbeitenAus} aria-pressed={p.onBearbeiten ? !!p.inBearbeitung : undefined}>{p.bearbeitenText ?? "Bearbeiten"}</button>
+      <button type="button" className="knopf" onClick={p.onFertig} disabled={!p.onFertig || !p.inBearbeitung} title="Speichern und Bearbeitung beenden">Fertig</button>
       <button type="button" className="knopf" onClick={p.onLoeschen} disabled={!p.onLoeschen} title={p.onLoeschen ? undefined : p.loeschenHinweis}>Löschen</button>
       <span className="trenn" />
       <form action={abmelden}>
@@ -70,11 +75,12 @@ export function Symbolleiste(p: {
   );
 }
 
-export function Statusleiste({ datei, satz, sperre }: { datei: string; satz?: string; sperre?: string }) {
+export function Statusleiste({ datei, satz, sperre, zusatz }: { datei: string; satz?: string; sperre?: string; zusatz?: string }) {
   return (
     <div className="status" role="status">
       <span>Datendatei: {datei}</span>
       <span>{satz ?? ""}</span>
+      {zusatz ? <span>{zusatz}</span> : null}
       <span>{sperre ?? "Nur lesen"}</span>
     </div>
   );

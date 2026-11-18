@@ -13,7 +13,7 @@ function muster(q: string): string {
 
 export type AngebotListenZeile = {
   id: number; angebotnr: string | null; angebotsdatum: string | null; jahr: number | null; status: string | null;
-  netto_summe: number | null; umzugstermin: string | null; sachbearbeiter: string | null;
+  netto_summe: number | null; umzugstermin: string | null; sachbearbeiter: string | null; entwurf: boolean;
   name: string; // Auftraggeber
   von_ort: string; nach_ort: string;
 };
@@ -23,7 +23,7 @@ export async function listeAngebote(p: { q?: string; jahr?: number | null; statu
   const seite = Math.max(1, p.seite ?? 1);
   let abfrage = sb
     .from("angebote")
-    .select("id,angebotnr,angebotsdatum,jahr,status,netto_summe,umzugstermin,sachbearbeiter,angebot_adressen(art,name,vorname,name1,plz,ort)", { count: "exact" })
+    .select("id,angebotnr,angebotsdatum,jahr,status,netto_summe,umzugstermin,sachbearbeiter,entwurf,angebot_adressen(art,name,vorname,name1,plz,ort)", { count: "exact" })
     .order("angebotsdatum", { ascending: false, nullsFirst: false })
     .order("id", { ascending: false })
     .range((seite - 1) * SEITENGROESSE, seite * SEITENGROESSE - 1);
@@ -41,7 +41,7 @@ export async function listeAngebote(p: { q?: string; jahr?: number | null; statu
     const ort = (x?: A) => [x?.plz, x?.ort].filter(Boolean).join(" ");
     return {
       id: a.id, angebotnr: a.angebotnr, angebotsdatum: a.angebotsdatum, jahr: a.jahr, status: a.status, netto_summe: a.netto_summe,
-      umzugstermin: a.umzugstermin, sachbearbeiter: a.sachbearbeiter,
+      umzugstermin: a.umzugstermin, sachbearbeiter: a.sachbearbeiter, entwurf: Boolean(a.entwurf),
       name: [[ag?.name, ag?.vorname].filter(Boolean).join(", "), ag?.name1].filter(Boolean).join(" · "),
       von_ort: ort(f("beladestelle") ?? ag), nach_ort: ort(f("entladestelle")),
     };
@@ -182,4 +182,23 @@ export async function ladeAuswahl(liste: string): Promise<string[]> {
   const sb = await db();
   const { data } = await sb.from("stamm_auswahl").select("wert").eq("liste", liste).eq("aktiv", true).order("sortierung").order("wert");
   return (data ?? []).map((x) => x.wert);
+}
+
+// ------------------------------------------------------------------ Einstellungen / Firmenangaben
+import { FIRMA_LOGO, FIRMA_VORGABE, type Firma, type FirmaSchluessel } from "./firma";
+
+/** Firmenangaben und feste Texte: Vorgaben, überschrieben durch die gespeicherten Einstellungen. */
+export async function ladeFirma(): Promise<Firma> {
+  const sb = await db();
+  const { data } = await sb.from("einstellungen").select("schluessel,wert");
+  const f: Record<string, string> = { ...FIRMA_VORGABE };
+  for (const z of data ?? []) if (z.schluessel in FIRMA_VORGABE && z.wert != null) f[z.schluessel as FirmaSchluessel] = z.wert;
+  return { ...(f as Record<FirmaSchluessel, string>), logo: FIRMA_LOGO };
+}
+
+/** Textbausteine für die Angebotsmaske, nach Bereich gruppiert verwendbar. */
+export async function ladeTextbausteine(): Promise<{ id: number; bereich: string | null; titel: string; text: string | null }[]> {
+  const sb = await db();
+  const { data } = await sb.from("stamm_textbausteine").select("id,bereich,titel,text").eq("aktiv", true).order("sortierung").order("titel");
+  return data ?? [];
 }

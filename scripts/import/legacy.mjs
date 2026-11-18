@@ -23,6 +23,17 @@ export async function oeffneSqlite() {
   }
 }
 
+/** Tabellen der Altdatei, die nach legacy geladen werden. */
+export const LEGACY_TABELLEN = new Set([
+  // vom Import nach app benutzt
+  "f02_umzug", "f02_umzug1", "f02_um_frei", "f02_checklist", "f02_barcode2", "f02_rechnung", "f02_rechnun1",
+  "f02_arbeit", "f02_arbeit1", "f02_arbeit2", "f02_kasse", "f02_platzda", "f02_um_stamm", "f02_umzugsart",
+  "stamm_nebleist", "stamm_packmat", "stamm_barcstam", "stamm_zimmer", "stamm_cl_vorlage", "stamm_fahrzeug", "stamm_herkunft", "stamm_umzugsart",
+  // für die nächsten Ausbaustufen (Gutschriften, Aufträge, Kasse, Nachkalkulation, Kundenzusätze, Auswahllisten)
+  "f02_gutschri", "f02_gutschr1", "f02_auftrag", "f02__kasse", "f02_kass_sal", "f02_nach_kal", "f02_um_st_1", "f02_um_st_2",
+  "stamm_mwst", "stamm_konto", "stamm_kostenst", "stamm_barcstam_sk", "stamm_telefon",
+]);
+
 const q = (n) => '"' + String(n).replace(/"/g, '""') + '"';
 function lit(v) {
   if (v === null || v === undefined) return "null";
@@ -34,8 +45,18 @@ function lit(v) {
 
 export async function ladeLegacy(pgc, log = console.log) {
   const s = await oeffneSqlite();
-  const tabellen = s.all("select name from sqlite_master where type='table' and name not like 'sqlite_%' order by name").map((r) => r.name);
+  const alle = s.all("select name from sqlite_master where type='table' and name not like 'sqlite_%' order by name").map((r) => r.name);
+  // In die Cloud kommen nur die Tabellen, die die App braucht oder absehbar brauchen wird (Datensparsamkeit).
+  // Alles andere (Personal, Stunden, Systemeinstellungen, Tarifwerke, leere Module) bleibt in der SQLite-Datei auf dem Rechner.
+  // ALTDATEN_ALLE=1 lädt ausnahmsweise alles.
+  const tabellen = process.env.ALTDATEN_ALLE === "1" ? alle : alle.filter((t) => LEGACY_TABELLEN.has(t));
   await pgc.query("create schema if not exists legacy");
+  if (process.env.ALTDATEN_ALLE !== "1") {
+    const vorhanden = (await pgc.query("select tablename from pg_tables where schemaname = 'legacy'")).rows.map((r) => r.tablename);
+    const weg = vorhanden.filter((t) => !LEGACY_TABELLEN.has(t));
+    for (let i = 0; i < weg.length; i += 40) await pgc.query(weg.slice(i, i + 40).map((t) => `drop table if exists legacy.${q(t)}`).join("; "));
+    if (weg.length) log(`legacy: ${weg.length} nicht benötigte Tabellen entfernt`);
+  }
   let gesamt = 0, nichtLeer = 0;
   let paket = [], paketGroesse = 0, paketTabellen = [];
   const abschicken = async () => {

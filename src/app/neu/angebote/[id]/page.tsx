@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AngebotMaske } from "@/components/neu/angebot/maske";
 import type { StammEintrag } from "@/components/neu/angebot/positionen";
-import { angebotFilter, ladeAngebot, ladeAuswahl, ladeStamm } from "@/lib/daten";
+import { angebotFilter, ladeAngebot, ladeAuswahl, ladeStamm, ladeTextbausteine } from "@/lib/daten";
 import type { StammChecklisteZeile, StammLeistungenZeile, StammPackmaterialZeile } from "@/lib/db-typen";
 import { aktuellerNutzer } from "@/lib/supabase/server";
 
@@ -18,7 +18,7 @@ export default async function AngebotSeite({ params }: { params: Promise<{ id: s
   const id = Number(roh);
   if (!Number.isInteger(id) || id <= 0) notFound();
 
-  const [angebot, nutzer, filter, leistungen, packmaterial, checkliste, herkunft, umzugsart, zahlungsbedingung, sachbearbeiter, besichtigung_art, volumen_ermittlung, mwst] = await Promise.all([
+  const [angebot, nutzer, filter, leistungen, packmaterial, checkliste, herkunft, umzugsart, zahlungsbedingung, sachbearbeiter, besichtigung_art, volumen_ermittlung, mwst, textbausteine] = await Promise.all([
     ladeAngebot(id),
     aktuellerNutzer(),
     angebotFilter(),
@@ -32,6 +32,7 @@ export default async function AngebotSeite({ params }: { params: Promise<{ id: s
     ladeAuswahl("besichtigung_art"),
     ladeAuswahl("volumen_ermittlung"),
     ladeAuswahl("mwst"),
+    ladeTextbausteine(),
   ]);
   if (!angebot) notFound();
 
@@ -58,6 +59,7 @@ export default async function AngebotSeite({ params }: { params: Promise<{ id: s
       stammLeistungen={stammLeistungen}
       stammPackmaterial={stammPackmaterial}
       stammCheckliste={checkliste}
+      textbausteine={textbausteine}
       istAdmin={nutzer?.rolle === "admin"}
     />
   );

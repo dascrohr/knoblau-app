@@ -96,3 +96,14 @@ import { Karte, Feld, Zahlfeld, Knopf } from "@/components/neu/ui";
 - Navigation links (Logo, Angebote, Kunden, Rechnungen, Stammdaten, für Admins Nutzer); unter 1024 px als einklappbares Menü.
 - Kopfzeile: Umschalter Altansicht/Neuansicht, Nutzername, Abmelden.
 - Angebotsmaske: Abschnittsleiste oben (sticky), Summen und Speichern rechts (sticky), unter 1280 px als Fußleiste.
+
+## Angebotsmaske: Bearbeitungs-Übergabe, Dialoge, Textbausteine
+
+- `.k-maskenkopf`: feste Leiste der Maske (Übergabe-Leiste + Sprungnavigation), klebt unter der Kopfzeile. Die Maske misst ihre Höhe und setzt `--k-maskenkopf-hoehe`; Sprungziele (`.k-abschnitt`), Summenkarte und fokussierte Felder halten diesen Abstand.
+- `UebergabeLeiste` (`angebot/uebergabe-leiste.tsx`): Zeilen `.k-uebergabe-zeile` mit `data-art="ruhig" | "warnung" | "info" | "fehler"`. „Nur Ansicht“ ist immer Warnfarbe. Knöpfe der Leiste sind auf Tablet/Touch 40 px hoch.
+- `.k-maske-feldsatz`: `<fieldset disabled>` um alle Abschnitte. Im Ansichtsmodus sind damit alle Eingaben und Knöpfe der Abschnitte gesperrt; neue Bausteine in den Abschnitten brauchen keine eigene Sperrlogik, solange sie native `input`/`select`/`textarea`/`button` benutzen. Links bleiben bedienbar.
+- `Dialog` (`@/components/neu/dialog`): `titel`, `onZu`, Inhalt als Kinder. Modal, schließt mit Esc, „Schließen“ und Klick daneben. Benutzt von `KundenDialog` (Aus Kundenstamm) und `TextbausteinKnopf`.
+- `TextbausteinKnopf` (`angebot/textbausteine.tsx`): `bereich`, `wert`, `onWert`, `ersetzen?`. Hängt den gewählten Baustein an (oder ersetzt). Bereiche stehen in `TEXTBAUSTEIN_BEREICHE` (`src/app/neu/stammdaten/konfig.ts`).
+- `SpeicherStatus`: zusätzlich `{ art: "ansicht" }` und `auto` bei `gespeichert` („Automatisch gespeichert um hh:mm“). `SpeicherKnopf`, `SummenKarte`, `SummenFuss` nehmen `gesperrt`.
+- `.k-tabelle-eingabe` hat eine Mindestbreite (44rem) und scrollt auf schmalen Bildschirmen waagerecht in `.k-tabelle-rahmen`.
+- `KundenFormular` (`@/components/neu/kunden-formular`): `kunde` (oder `null` für neu), `zahlungsbedingungen`.

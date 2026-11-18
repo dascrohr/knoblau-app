@@ -39,6 +39,17 @@ export default async function StammdatenSeite() {
             </Link>
           </li>
         ))}
+        <li>
+          <Link href="/neu/stammdaten/firma" className="k-karte flex h-full flex-col gap-2" style={{ padding: "var(--k-a4)", textDecoration: "none", color: "inherit" }}>
+            <span style={{ fontFamily: "var(--k-schrift-titel)", fontSize: "var(--k-text-l)", fontWeight: 600 }}>Firmenangaben und Drucktexte</span>
+            <span className="k-leise" style={{ flex: 1 }}>
+              Briefkopf, Fußzeile sowie Einleitungs- und Schlusstexte von Angebot, Auftragsbestätigung und Rechnung.
+            </span>
+            <span className="flex flex-wrap items-center gap-2">
+              <Abzeichen art="info">Einstellungen</Abzeichen>
+            </span>
+          </Link>
+        </li>
       </ul>
     </>
   );

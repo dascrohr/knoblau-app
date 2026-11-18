@@ -12,9 +12,17 @@ export type Zustand = {
   checkliste: Checkpunkt[];
 };
 
+export type Textbaustein = { id: number; bereich: string | null; titel: string; text: string | null };
+
 export type Maske = {
   z: Zustand;
   lesen: boolean;
+  /** Textbausteine aus den Stammdaten (für die großen Textfelder). */
+  bausteine: Textbaustein[];
+  /** Legt nach Rückfrage eine Kopie des Angebots an und öffnet sie. */
+  duplizieren: () => void;
+  /** Läuft gerade Speichern/Duplizieren? Dann Aktionsknöpfe sperren. */
+  beschaeftigt: boolean;
   setA: (patch: Partial<Angebot>) => void;
   setAdr: (art: AdressArt, patch: Partial<Adresse>) => void;
   setPos: (bereich: Bereich, zeile: number, patch: Partial<Position>) => void;

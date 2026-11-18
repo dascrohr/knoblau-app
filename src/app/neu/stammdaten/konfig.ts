@@ -50,6 +50,18 @@ export const AUSWAHL_LISTEN: { wert: string; text: string }[] = [
   { wert: "volumen_ermittlung", text: "Volumen-Ermittlung" },
 ];
 
+/** Bereiche der Textbausteine: bestimmen, bei welchem Textfeld der Angebotsmaske ein Baustein zuerst angeboten wird. */
+export const TEXTBAUSTEIN_BEREICHE: { wert: string; text: string }[] = [
+  { wert: "vereinbarungen", text: "Vereinbarungen" },
+  { wert: "handwerker", text: "Arbeiten der Handwerker" },
+  { wert: "packarbeit", text: "Packleistungen" },
+  { wert: "frei", text: "Freie Leistungsbeschreibung" },
+  { wert: "termine", text: "Freie Termine" },
+  { wert: "intern", text: "Absprachen intern" },
+  { wert: "zahlungsbedingung", text: "Zahlungsbedingung" },
+  { wert: "allgemein", text: "Allgemein (überall)" },
+];
+
 /** Listen, die nicht gepflegt werden (interne Filterlisten). */
 export function auswahlListeVersteckt(liste: unknown): boolean {
   return typeof liste !== "string" || liste.startsWith("filter_");
@@ -188,9 +200,9 @@ export const STAMM_KONFIG: StammKonfig[] = [
     tabelle: "stamm_textbausteine",
     titel: "Textbausteine",
     einzahl: "Textbaustein",
-    beschreibung: "Fertige Texte für Vereinbarungen, Packarbeit, Handwerker und Zahlungsbedingungen.",
+    beschreibung: "Fertige Texte für Vereinbarungen, Packarbeit, Handwerker, Termine und Zahlungsbedingungen. In der Angebotsmaske über „Textbaustein einfügen“ abrufbar.",
     felder: [
-      { name: "bereich", label: "Bereich", art: "text", vorschlaegeAusDaten: true, hinweis: "z. B. vereinbarungen, packarbeit, handwerker, zahlungsbedingung, frei" },
+      { name: "bereich", label: "Bereich", art: "auswahl", optionen: TEXTBAUSTEIN_BEREICHE, standard: "allgemein", hinweis: "Bei diesem Textfeld der Angebotsmaske wird der Baustein zuerst angeboten." },
       { name: "titel", label: "Titel", art: "text", pflicht: true },
       { name: "text", label: "Text", art: "lang", breit: true },
       SORTIERUNG,

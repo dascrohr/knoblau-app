@@ -56,6 +56,13 @@ export default async function Angebote({ searchParams }: { searchParams: SuchPar
                   <Link href={`/neu/angebote/${a.id}`} className="text-inherit no-underline hover:underline">
                     {a.name || <span className="k-leise">ohne Namen</span>}
                   </Link>
+                  {/* `entwurf` kommt erst mit, sobald listeAngebote das Feld liefert. */}
+                  {"entwurf" in a && a.entwurf ? (
+                    <>
+                      {" "}
+                      <Abzeichen art="warnung" title="Entwurf: noch nicht fertig">Entwurf</Abzeichen>
+                    </>
+                  ) : null}
                 </td>
                 <td>
                   {a.von_ort || a.nach_ort ? (

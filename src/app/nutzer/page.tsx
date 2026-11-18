@@ -22,6 +22,7 @@ export default async function NutzerSeite() {
   return (
     <main className="mx-auto max-w-3xl p-6 sm:p-8">
       <Link href="/neu" className="text-sm text-neutral-600 underline">← Zurück zur App</Link>
+      <Link href="/konto" className="ml-4 text-sm text-neutral-600 underline">Mein Konto (Passwort ändern)</Link>
       <h1 className="mt-3 text-2xl font-semibold">Nutzerverwaltung</h1>
       <p className="mt-1 text-sm text-neutral-600">Zugänge gibt es nur hier. Das Startpasswort gibst du persönlich weiter.</p>
       <table className="mt-6 w-full text-left text-sm">

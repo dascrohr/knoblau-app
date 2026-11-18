@@ -2,6 +2,7 @@
 import { memo, useState } from "react";
 import { TERMIN_ZEILEN, type Termin } from "@/lib/angebot-typen";
 import { Karte, Knopf, Tabelle, Textbereich } from "../ui";
+import { TextbausteinKnopf } from "./textbausteine";
 import { freieZeile, type Setzer } from "./zustand";
 
 type Props = { termine: Termin[]; termineFrei: string | null; info: string | null; setzer: Setzer };
@@ -31,8 +32,9 @@ export const Termine = memo(function Termine({ termine, termineFrei, info, setze
           </>
         }
       >
-        <div className="k-karte-inhalt">
+        <div className="k-karte-inhalt flex flex-col gap-1">
           <Textbereich label="Freie Termine" rows={3} wert={termineFrei} onWert={(w) => setzer.kopf({ termine_frei: w })} />
+          <TextbausteinKnopf bereich="termine" wert={termineFrei} onWert={(w) => setzer.kopf({ termine_frei: w })} />
         </div>
         {zeilen.length === 0 ? (
           <p className="k-leise px-4 pb-2">Noch keine Ausführungstermine eingetragen.</p>
@@ -75,8 +77,9 @@ export const Termine = memo(function Termine({ termine, termineFrei, info, setze
             </Tabelle>
           </div>
         )}
-        <div className="k-karte-inhalt">
+        <div className="k-karte-inhalt flex flex-col gap-1">
           <Textbereich label="Absprachen, die nicht ins Angebot gehören (intern)" rows={4} wert={info} onWert={(w) => setzer.kopf({ info: w })} />
+          <TextbausteinKnopf bereich="intern" wert={info} onWert={(w) => setzer.kopf({ info: w })} />
         </div>
       </Karte>
     </div>

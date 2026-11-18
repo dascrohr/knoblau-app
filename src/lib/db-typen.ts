@@ -38,6 +38,19 @@ export type AngebotPositionenZeile = {
   waehrung: string | null;
 };
 
+export type AngebotSperrenZeile = {
+  angebot_id: number;
+  nutzer_id: string;
+  nutzer_name: string | null;
+  sitzung: string;
+  seit: string;
+  zuletzt: string;
+  angefragt_von: string | null;
+  angefragt_name: string | null;
+  angefragt_sitzung: string | null;
+  angefragt_am: string | null;
+};
+
 export type AngebotTermineZeile = {
   id: number;
   angebot_id: number;
@@ -159,6 +172,8 @@ export type AngeboteZeile = {
   erstellt_am: string;
   geaendert_am: string;
   geaendert_von: string | null;
+  version: number;
+  entwurf: boolean;
 };
 
 export type ArbeitsscheinPositionenZeile = {
@@ -225,6 +240,12 @@ export type ChecklistenpunkteZeile = {
   wert: string | null;
   vorgaben: string | null;
   eintragen: boolean;
+};
+
+export type EinstellungenZeile = {
+  schluessel: string;
+  wert: string | null;
+  geaendert_am: string;
 };
 
 export type HalteverbotszonenZeile = {
@@ -359,7 +380,7 @@ export type RechnungenZeile = {
 
 export type RechnungspositionenZeile = {
   id: number;
-  rechnung_id: number;
+  rechnung_id: number | null;
   legacy_rowid: number | null;
   zeile: number | null;
   leistungsdatum: string | null;
@@ -373,6 +394,7 @@ export type RechnungspositionenZeile = {
   konto: string | null;
   kostenstelle: string | null;
   inhalt: string | null;
+  rechnungnr: string | null;
 };
 
 export type StammAuswahlZeile = {

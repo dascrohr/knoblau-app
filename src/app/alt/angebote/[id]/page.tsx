@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { angebotNachbarn, ladeAngebot, ladeAuswahl, ladeStamm } from "@/lib/daten";
+import { angebotNachbarn, ladeAngebot, ladeAuswahl, ladeStamm, ladeTextbausteine } from "@/lib/daten";
 import { aktuellerNutzer } from "@/lib/supabase/server";
 import type { StammChecklisteZeile, StammLeistungenZeile, StammPackmaterialZeile, StammZimmerZeile } from "@/lib/db-typen";
 import { AngebotMaske } from "@/components/alt/angebot-maske";
@@ -23,7 +23,7 @@ export default async function AngebotSeite({ params, searchParams }: { params: P
   const [{ id: roh }, sp] = await Promise.all([params, searchParams]);
   const id = Number(roh);
   if (!Number.isInteger(id) || id <= 0) notFound();
-  const [daten, nachbarn, nutzer, leistungen, packmaterial, checkliste, zimmer, ...listen] = await Promise.all([
+  const [daten, nachbarn, nutzer, leistungen, packmaterial, checkliste, zimmer, textbausteine, ...listen] = await Promise.all([
     ladeAngebot(id),
     angebotNachbarn(id),
     aktuellerNutzer(),
@@ -31,6 +31,7 @@ export default async function AngebotSeite({ params, searchParams }: { params: P
     sicher(ladeStamm<StammPackmaterialZeile>("stamm_packmaterial")),
     sicher(ladeStamm<StammChecklisteZeile>("stamm_checkliste")),
     sicher(ladeStamm<StammZimmerZeile>("stamm_zimmer")),
+    sicher(ladeTextbausteine()),
     ...LISTEN.map((l) => sicher(ladeAuswahl(l))),
   ]);
   if (!daten) notFound();
@@ -42,7 +43,7 @@ export default async function AngebotSeite({ params, searchParams }: { params: P
       nachbarn={{ erster: nachbarn.erster, zurueck: nachbarn.zurueck, vor: nachbarn.vor, letzter: nachbarn.letzter }}
       position={nachbarn.position}
       gesamt={nachbarn.gesamt}
-      stamm={{ leistungen, packmaterial, checkliste, zimmer, auswahl }}
+      stamm={{ leistungen, packmaterial, checkliste, zimmer, textbausteine, auswahl }}
       admin={nutzer?.rolle === "admin"}
       neu={eins(sp, "neu") === "1"}
     />

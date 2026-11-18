@@ -2,6 +2,7 @@
 import { memo } from "react";
 import type { Angebot } from "@/lib/angebot-typen";
 import { Feld, Karte, Schalter, Textbereich, Zahlfeld } from "../ui";
+import { TextbausteinKnopf } from "./textbausteine";
 import type { Auswahllisten, Setzer } from "./zustand";
 
 type Props = { angebot: Angebot; setzer: Setzer; listen: Auswahllisten };
@@ -66,7 +67,10 @@ export const Besichtigung = memo(function Besichtigung({ angebot, setzer, listen
             <Feld className="k-s5" label="Art der Ermittlung" wert={angebot.volumen_ermittlung} onWert={k("volumen_ermittlung")} vorschlaege={listen.volumen_ermittlung.length ? listen.volumen_ermittlung : ["geschätzt", "laut Liste", "nach Beladung", "Schätzung", "Angabe"]} />
             <Feld className="k-s4" label="Gewicht" wert={angebot.gewicht} onWert={k("gewicht")} />
             <Feld className="k-s8" label="Umzugsart" wert={angebot.umzugsart} onWert={k("umzugsart")} vorschlaege={listen.umzugsart} />
-            <Feld label="Zahlungsbedingung" wert={angebot.zahlungsbedingung} onWert={k("zahlungsbedingung")} vorschlaege={listen.zahlungsbedingung} />
+            <div className="flex flex-col gap-1">
+              <Feld label="Zahlungsbedingung" wert={angebot.zahlungsbedingung} onWert={k("zahlungsbedingung")} vorschlaege={listen.zahlungsbedingung} />
+              <TextbausteinKnopf bereich="zahlungsbedingung" ersetzen wert={angebot.zahlungsbedingung} onWert={k("zahlungsbedingung")} />
+            </div>
             <Zahlfeld className="k-s6" label="Umsatzsteuer" einheit="%" wert={angebot.ust_satz} onWert={(w) => setzer.kopf({ ust_satz: w ?? 19 })} list="k-ust-saetze" />
             <Zahlfeld className="k-s6" label="Generalrabatt" einheit="%" wert={angebot.generalrabatt} onWert={k("generalrabatt")} />
             <datalist id="k-ust-saetze">
@@ -88,7 +92,10 @@ export const Besichtigung = memo(function Besichtigung({ angebot, setzer, listen
         </div>
       </Karte>
       <Karte titel="Vereinbarungen (Vertragsbestandteil)">
-        <Textbereich label="Vereinbarungen" labelVersteckt rows={6} wert={angebot.vereinbarungen} onWert={k("vereinbarungen")} />
+        <div className="flex flex-col gap-1">
+          <Textbereich label="Vereinbarungen" labelVersteckt rows={6} wert={angebot.vereinbarungen} onWert={k("vereinbarungen")} />
+          <TextbausteinKnopf bereich="vereinbarungen" wert={angebot.vereinbarungen} onWert={k("vereinbarungen")} />
+        </div>
       </Karte>
     </div>
   );

@@ -1,4 +1,8 @@
-/* Druckansichten (Angebot, Rechnung). Alles unter .druck, eigenes Layout für A4. */
+/* Druckansichten (Angebot, Auftragsbestätigung, Rechnung). Alles unter .druck, eigenes Layout für A4.
+   Maße: Seitenrand oben/unten 12 mm (@page), links 22 mm, rechts 16 mm. Briefkopf 27 mm hoch, danach 6 mm Abstand:
+   Die Absenderzeile beginnt 45 mm, die Anschrift ca. 50 mm von oben und 22 mm von links (Fenster DIN lang).
+   Die Fußzeile steht absolut am unteren Blattrand; das Blatt hält dafür unten 24 mm frei.
+   SEITE_MM / FUSS_MM in components/druck/drucken-knopf.tsx müssen zu diesen Maßen passen. */
 .druck {
   --d-rot: #e1001a;
   --d-text: #1d1d1d;
@@ -16,28 +20,42 @@
 .druck .d-knopf { border: 1px solid #b9b9b9; background: #fff; border-radius: 6px; padding: 8px 14px; font: inherit; font-size: 14px; color: inherit; text-decoration: none; cursor: pointer; }
 .druck .d-knopf-haupt { background: var(--d-rot); border-color: var(--d-rot); color: #fff; font-weight: 600; }
 .druck .d-leiste-hinweis { font-size: 12px; color: var(--d-grau); }
-.druck .d-entwurf { max-width: 210mm; margin: 0 auto 12px; background: #fff7d6; border: 1px solid #e6cf7a; border-radius: 6px; padding: 8px 12px; font-size: 13px; }
-.druck .d-blatt { background: #fff; width: 210mm; max-width: 100%; min-height: 297mm; margin: 0 auto; padding: 14mm 16mm 12mm 22mm; box-shadow: 0 2px 12px rgb(0 0 0 / 0.18); display: flex; flex-direction: column; }
-.druck .d-kopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 10mm; border-bottom: 2px solid var(--d-rot); padding-bottom: 5mm; }
-.druck .d-logo { height: 24mm; width: auto; }
-.druck .d-kopf-firma { display: flex; flex-direction: column; text-align: right; font-size: 9pt; color: var(--d-grau); }
+.druck .d-knopf-aktiv { background: #2b2b2b; border-color: #2b2b2b; color: #fff; font-weight: 600; }
+.druck .d-umschalter { display: inline-flex; }
+.druck .d-umschalter .d-knopf { border-radius: 0; margin-left: -1px; }
+.druck .d-umschalter .d-knopf:first-child { border-radius: 6px 0 0 6px; margin-left: 0; }
+.druck .d-umschalter .d-knopf:last-child { border-radius: 0 6px 6px 0; }
+.druck .d-hinweis { max-width: 210mm; margin: 0 auto 12px; background: #fff7d6; border: 1px solid #e6cf7a; border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+.druck .d-hinweis a { color: inherit; font-weight: 600; text-decoration: underline; }
+.druck .d-blatt { position: relative; box-sizing: border-box; background: #fff; width: 210mm; min-height: 297mm; margin: 0 auto; padding: 12mm 16mm 36mm 22mm; box-shadow: 0 2px 12px rgb(0 0 0 / 0.18); }
+.druck .d-kopf { box-sizing: border-box; height: 27mm; overflow: hidden; display: flex; justify-content: space-between; align-items: flex-start; gap: 10mm; border-bottom: 2px solid var(--d-rot); padding-bottom: 4mm; }
+.druck .d-logo { height: 22mm; width: auto; }
+.druck .d-kopf-firma { display: flex; flex-direction: column; text-align: right; font-size: 9pt; line-height: 1.3; color: var(--d-grau); }
 .druck .d-kopf-firma strong { color: var(--d-text); font-size: 11pt; }
-.druck .d-adresszeile { display: flex; justify-content: space-between; gap: 10mm; margin-top: 12mm; min-height: 38mm; }
-.druck .d-anschrift { width: 85mm; }
-.druck .d-absender { font-size: 7pt; color: var(--d-grau); border-bottom: 0.5px solid var(--d-linie); margin-bottom: 2.5mm; padding-bottom: 0.5mm; white-space: nowrap; overflow: hidden; }
+.druck .d-adresszeile { display: flex; justify-content: space-between; gap: 10mm; margin-top: 6mm; min-height: 40mm; }
+.druck .d-anschrift { width: 85mm; flex: none; overflow-wrap: anywhere; }
+.druck .d-absender { font-size: 7pt; color: var(--d-grau); border-bottom: 0.5px solid var(--d-linie); margin-bottom: 1.5mm; padding-bottom: 0.5mm; line-height: 1.4; white-space: nowrap; overflow: hidden; }
 .druck .d-leer { color: var(--d-grau); font-style: italic; }
 .druck .d-info { margin: 0; font-size: 9.5pt; min-width: 58mm; }
 .druck .d-info > div { display: flex; justify-content: space-between; gap: 6mm; padding: 0.6mm 0; }
 .druck .d-info dt { color: var(--d-grau); }
 .druck .d-info dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
-.druck .d-inhalt { flex: 1; margin-top: 8mm; }
-.druck h1 { font-size: 15pt; margin: 0 0 1mm; letter-spacing: 0.02em; }
-.druck .d-unter { color: var(--d-grau); margin: 0 0 5mm; }
+.druck .d-inhalt { margin-top: 8mm; }
+.druck .d-titel { display: flex; justify-content: space-between; align-items: baseline; gap: 6mm; margin: 0 0 1mm; }
+.druck h1 { font-size: 15pt; margin: 0; letter-spacing: 0.02em; }
+.druck .d-entwurf-vermerk { flex: none; font-size: 9.5pt; font-weight: 600; letter-spacing: 0.3em; color: var(--d-grau); border: 1px solid var(--d-grau); padding: 0.4mm 1.6mm 0.4mm 2.6mm; }
+.druck .d-unter { color: var(--d-grau); margin: 0 0 5mm; white-space: pre-line; }
+.druck .d-einleitung { margin: 0 0 4mm; white-space: pre-line; }
 .druck h2 { font-size: 10.5pt; margin: 6mm 0 1.5mm; text-transform: uppercase; letter-spacing: 0.06em; color: var(--d-rot); }
 .druck h3 { font-size: 10pt; margin: 5mm 0 1mm; }
 .druck .d-orte { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; margin: 2mm 0 2mm; }
 .druck .d-orte h3 { margin-top: 0; }
 .druck .d-orte p { margin: 0; }
+.druck .d-termine { margin: 4mm 0 1mm; border-left: 3px solid var(--d-rot); padding: 1.2mm 0 1.2mm 4mm; break-inside: avoid; }
+.druck .d-termine h3 { margin-top: 0; }
+.druck .d-termine p { margin: 0; white-space: pre-wrap; }
+.druck .d-termine .d-termin-haupt { font-size: 11.5pt; font-weight: 700; }
+.druck .d-termine .d-termin-haupt span { font-size: 9.5pt; font-weight: 400; color: var(--d-grau); margin-right: 2mm; }
 .druck .d-klein { font-size: 9pt; color: var(--d-grau); }
 .druck table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .druck th { text-align: left; font-size: 8pt; font-weight: 600; color: var(--d-grau); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--d-text); padding: 1mm 1.5mm 1mm 0; }
@@ -51,16 +69,41 @@
 .druck .d-summen td { border-bottom: 0; padding: 0.8mm 0; }
 .druck .d-summen .d-gesamt td { border-top: 1.5px solid var(--d-text); border-bottom: 3px double var(--d-text); font-weight: 700; font-size: 12pt; padding: 1.6mm 0; }
 .druck .d-text { break-inside: avoid-page; }
-.druck .d-text p { margin: 0; white-space: pre-wrap; }
+/* Lange Texte (Vertragsbedingungen, Leistungsbeschreibung) dürfen über Seiten laufen. */
+.druck .d-text.d-text-lang { break-inside: auto; }
+.druck .d-text p { margin: 0; white-space: pre-wrap; orphans: 3; widows: 3; }
 .druck .d-vertrag p { font-size: 9pt; }
-.druck .d-unterschrift { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; margin-top: 16mm; break-inside: avoid; font-size: 9pt; color: var(--d-grau); }
-.druck .d-unterschrift div { border-top: 0.5px solid var(--d-text); padding-top: 1mm; }
-.druck .d-fuss { margin-top: 8mm; border-top: 1px solid var(--d-linie); padding-top: 2.5mm; display: flex; flex-direction: column; text-align: center; font-size: 7.5pt; color: var(--d-grau); }
+.druck .d-schluss { margin-top: 5mm; }
+.druck .d-unterschrift { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; align-items: end; margin-top: 16mm; break-inside: avoid; font-size: 9pt; color: var(--d-grau); }
+.druck .d-u-vor { margin: 0 0 13mm; color: var(--d-text); font-size: 10pt; }
+.druck .d-u-linie { border-top: 0.5px solid var(--d-text); padding-top: 1mm; }
+.druck .d-fuss { position: absolute; left: 22mm; right: 16mm; bottom: 12mm; border-top: 1px solid var(--d-linie); padding-top: 2mm; display: flex; flex-direction: column; text-align: center; font-size: 7.5pt; line-height: 1.35; color: var(--d-grau); }
+/* Überschriften bleiben beim folgenden Inhalt, Blöcke mit festem Zusammenhang werden nicht getrennt. */
+.druck h1, .druck h2, .druck h3, .druck .d-titel { break-after: avoid; }
+.druck thead { display: table-header-group; }
+.druck .d-kopf, .druck .d-adresszeile, .druck .d-orte, .druck .d-fuss { break-inside: avoid; }
+
+/* Schmale Bildschirme (Tablet hochkant, Telefon): Das Blatt bleibt 210 mm breit und wird als Ganzes verkleinert.
+   Stufe passt, solange Fensterbreite >= 794px * zoom + 16px. */
+@media screen and (max-width: 830px) {
+  .druck { padding: 12px 8px 40px; }
+  .druck .d-blatt { zoom: 0.92; }
+}
+@media screen and (max-width: 760px) { .druck .d-blatt { zoom: 0.84; } }
+@media screen and (max-width: 700px) { .druck .d-blatt { zoom: 0.76; } }
+@media screen and (max-width: 620px) { .druck .d-blatt { zoom: 0.66; } }
+@media screen and (max-width: 540px) { .druck .d-blatt { zoom: 0.56; } }
+@media screen and (max-width: 460px) { .druck .d-blatt { zoom: 0.46; } }
+@media screen and (max-width: 390px) { .druck .d-blatt { zoom: 0.4; } }
+@media screen and (max-width: 335px) { .druck .d-blatt { zoom: 0.36; } }
+
 @page { size: A4; margin: 12mm 0; }
 @media print {
   html, body { background: #fff !important; }
   .druck { background: #fff; padding: 0; min-height: 0; }
-  .druck .d-leiste, .druck .d-entwurf { display: none; }
-  .druck .d-blatt { box-shadow: none; width: auto; min-height: 0; padding: 2mm 16mm 0 22mm; display: block; }
-  .druck .d-fuss { margin-top: 10mm; }
+  .druck .d-leiste, .druck .d-hinweis { display: none; }
+  /* --d-seiten setzt die Druckleiste (geschätzte Seitenzahl): Das Blatt füllt volle Seiten, die Fußzeile steht auf der letzten unten.
+     3 mm Luft, damit durch Rundung keine Leerseite entsteht. Oberer Rand kommt aus @page. */
+  .druck .d-blatt { box-shadow: none; width: auto; margin: 0; padding: 0 16mm 24mm 22mm; min-height: calc(var(--d-seiten, 1) * 273mm - 3mm); }
+  .druck .d-fuss { bottom: 0; }
 }

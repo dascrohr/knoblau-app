@@ -40,6 +40,10 @@ export type AngebotKomplett = {
 /** Was die Maske beim Speichern schickt. Fehlende Teile bleiben unverändert. */
 export type AngebotSpeichern = {
   id: number;
+  /** Kennung des Browser-Fensters aus `useBearbeitung`. Ohne sie wird abgelehnt, solange jemand anderes bearbeitet. */
+  sitzung?: string | null;
+  /** `angebot.version`, wie die Maske sie geladen bzw. beim letzten Speichern zurückbekommen hat. Schützt vor dem Überschreiben eines neueren Stands. */
+  version?: number | null;
   angebot?: Partial<Angebot>;
   adressen?: Partial<Record<AdressArt, Partial<Adresse>>>;
   positionen?: Position[]; // vollständige Liste aller Bereiche; ersetzt den Bestand
@@ -47,11 +51,26 @@ export type AngebotSpeichern = {
   checkliste?: Checkpunkt[]; // vollständige Liste; ersetzt den Bestand
 };
 
-export type Ergebnis<T = undefined> = { ok: true; daten: T } | { ok: false; fehler: string };
+/** `grund` beim Speichern eines Angebots: 'gesperrt' = jemand anderes bearbeitet gerade; 'veraltet' = es gibt einen neueren gespeicherten Stand. */
+export type Ergebnis<T = undefined> = { ok: true; daten: T } | { ok: false; fehler: string; grund?: "gesperrt" | "veraltet" };
 
 export function leereAdresse(art: AdressArt): Adresse {
   return { art, bezeichnung: null, anrede: null, titel: null, vorname: null, name: null, name1: null, name2: null, zuhaenden: null, strasse: null, lkz: null, plz: null, ort: null, telefon: null };
 }
+/** Antwort der Bearbeitungs-Sperre (siehe supabase/migrations/0004). */
+export type SperrAntwort = {
+  habe: boolean; // dieses Fenster darf bearbeiten
+  frei: boolean; // niemand bearbeitet
+  nutzer_name?: string | null; // wer bearbeitet (wenn nicht ich)
+  selber_nutzer?: boolean; // derselbe Nutzer in einem anderen Fenster/Gerät
+  seit?: string | null;
+  anfrage_name?: string | null; // jemand bittet um Übergabe (nur wenn habe)
+  uebernommen?: boolean; // jemand anderes hat übernommen
+  version?: number; // aktueller gespeicherter Stand des Angebots
+  fehlt?: boolean;
+};
+export type SperrModus = "holen" | "halten" | "anfragen" | "erzwingen" | "abgeben" | "status";
+
 export function leerePosition(bereich: Bereich, zeile: number): Position {
   return { bereich, zeile, anzahl: null, text: null, einheiten: null, einzelpreis: null, prozent: null, art: null, beschreibung: null, ust: null, konto: null, kostenstelle: null, waehrung: null };
 }

@@ -6,6 +6,7 @@ import type { StammLeistungenZeile, StammPackmaterialZeile } from "@/lib/db-type
 import { berechnePreis, formatBetrag, zeilenSumme, type Bereich } from "@/lib/preis";
 import { AHaken, AMemo, AText, AZahl, Aus, TextEingabe, Zahl, ZahlEingabe, useMaske } from "./felder";
 import { Gruppe } from "./anzeige";
+import { BausteinKnopf } from "./dialoge";
 
 type StammZeile = { id: number; suchbegriff: string | null; text: string; beschreibung: string | null; einheiten: number | null; einzelpreis: number | null; prozent: number | null; anzahl?: number | null; art?: string | null };
 
@@ -115,7 +116,7 @@ export function PositionsTabelle({ bereich, zeilen, art, stamm, stammTitel }: { 
           </tr>
         </tfoot>
       </table>
-      {suche != null && stamm && <StammDialog titel={stammTitel ?? "Suche in Stammdaten"} liste={stamm} onWahl={(s) => uebernehmen(suche, s)} onZu={() => setSuche(null)} />}
+      {suche != null && stamm && !m.lesen && <StammDialog titel={stammTitel ?? "Suche in Stammdaten"} liste={stamm} onWahl={(s) => uebernehmen(suche, s)} onZu={() => setSuche(null)} />}
     </>
   );
 }
@@ -197,7 +198,7 @@ export function ReiterFrei() {
         <Aus>Bild einfügen</Aus>
         <Aus>Bild löschen</Aus>
         <Aus>Zwischensummen rechnen</Aus>
-        <Aus>Textbaustein einfügen</Aus>
+        <BausteinKnopf spalte="freie_leistung_text" bereich="frei">Textbaustein einfügen</BausteinKnopf>
         <div style={{ width: 210, ["--lb" as string]: "110px" }}><AZahl spalte="km" label="Entfernung in km" /></div>
       </div>
       <table className="pos">
@@ -255,7 +256,7 @@ export function ReiterNebenleistung({ stamm }: { stamm: StammLeistungenZeile[] }
         <p className="hinweistext">Zeilen ohne Preis dienen als Hinweistext.</p>
       </Gruppe>
       <Gruppe titel="Arbeiten der Handwerker">
-        <div className="reihe"><Aus>Textbausteine aus Stammdaten</Aus></div>
+        <div className="reihe"><BausteinKnopf spalte="handwerker" bereich="handwerker">Textbausteine aus Stammdaten</BausteinKnopf></div>
         <AMemo spalte="handwerker" label="Arbeiten der Handwerker" zeilen={5} />
       </Gruppe>
     </div>
@@ -269,7 +270,7 @@ export function ReiterPackmaterial({ stamm }: { stamm: StammPackmaterialZeile[] 
         <PositionsTabelle bereich="packmaterial" zeilen={BEREICH_ZEILEN.packmaterial} art="packmaterial" stamm={stamm} stammTitel="Suche in Stammdaten: Packmaterial" />
       </Gruppe>
       <Gruppe titel="Vereinbarungen über Packleistungen">
-        <div className="reihe"><Aus>Textbausteine</Aus></div>
+        <div className="reihe"><BausteinKnopf spalte="packarbeit" bereich="packarbeit">Textbausteine</BausteinKnopf></div>
         <AMemo spalte="packarbeit" label="Vereinbarungen über Packleistungen" zeilen={5} />
       </Gruppe>
     </div>

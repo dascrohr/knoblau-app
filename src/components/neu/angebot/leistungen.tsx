@@ -4,6 +4,7 @@ import { memo, useCallback, useState } from "react";
 import { BEREICH_ZEILEN, type Angebot, type Position } from "@/lib/angebot-typen";
 import { Karte, Knopf, Textbereich } from "../ui";
 import { PositionsTabelle, type StammEintrag } from "./positionen";
+import { TextbausteinKnopf } from "./textbausteine";
 import { aenderePosition, entfernePosition, freieZeile, positionenVon, type Setzer } from "./zustand";
 
 /** Hält fest, welche (noch leeren) Zeilen zusätzlich sichtbar sind. */
@@ -44,8 +45,9 @@ export const FreieLeistung = memo(function FreieLeistung({ positionen, text, set
         <div className="px-1">
           <PositionsTabelle bereich="frei" name="Freie Leistungen" zeilen={z.zeilen} positionen={frei} onAendern={aendern} onEntfernen={entfernen} mitBeschreibung einheitenTitel="Stück" leerText="Noch keine freien Leistungen. Mit „Zeile hinzufügen“ legen Sie eine an." />
         </div>
-        <div className="k-karte-inhalt">
+        <div className="k-karte-inhalt flex flex-col gap-1">
           <Textbereich label="Freie Leistungsbeschreibung" rows={4} wert={text} onWert={(w) => setzer.kopf({ freie_leistung_text: w })} />
+          <TextbausteinKnopf bereich="frei" wert={text} onWert={(w) => setzer.kopf({ freie_leistung_text: w })} />
         </div>
       </Karte>
     </div>
@@ -96,8 +98,9 @@ function ListenAbschnitt({ bereich, id, titel, name, positionen, text, textLabel
             leerText={`Noch keine Zeilen. Mit „Zeile hinzufügen“ legen Sie eine an; über „Stammdaten“ übernehmen Sie Text und Preis.`}
           />
         </div>
-        <div className="k-karte-inhalt">
+        <div className="k-karte-inhalt flex flex-col gap-1">
           <Textbereich label={textLabel} rows={4} wert={text} onWert={(w) => setzer.kopf({ [textFeld]: w } as Partial<Angebot>)} />
+          <TextbausteinKnopf bereich={textFeld} wert={text} onWert={(w) => setzer.kopf({ [textFeld]: w } as Partial<Angebot>)} />
         </div>
       </Karte>
     </div>

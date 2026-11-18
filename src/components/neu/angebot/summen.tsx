@@ -2,11 +2,11 @@
 import { VERSICHERUNGSSTEUER_SATZ, formatBetrag, formatZahl, type PreisUebersicht } from "@/lib/preis";
 import { Knopf } from "../ui";
 
-export type SpeicherStatus = { art: "sauber" } | { art: "offen" } | { art: "speichert" } | { art: "gespeichert"; um: string } | { art: "fehler" };
+export type SpeicherStatus = { art: "sauber" } | { art: "offen" } | { art: "speichert" } | { art: "gespeichert"; um: string; auto?: boolean } | { art: "fehler" } | { art: "ansicht" };
 
 export function StatusText({ status }: { status: SpeicherStatus }) {
   const text =
-    status.art === "offen" ? "Ungespeicherte Änderungen" : status.art === "speichert" ? "Speichert …" : status.art === "gespeichert" ? `Gespeichert um ${status.um}` : status.art === "fehler" ? "Nicht gespeichert" : "Keine Änderungen";
+    status.art === "offen" ? "Ungespeicherte Änderungen" : status.art === "speichert" ? "Speichert …" : status.art === "gespeichert" ? `${status.auto ? "Automatisch gespeichert" : "Gespeichert"} um ${status.um}` : status.art === "fehler" ? "Nicht gespeichert" : status.art === "ansicht" ? "Nur Ansicht" : "Keine Änderungen";
   return (
     <span className="k-speicherstatus" data-zustand={status.art} role="status" aria-live="polite">
       {text}
@@ -14,17 +14,18 @@ export function StatusText({ status }: { status: SpeicherStatus }) {
   );
 }
 
-export function SpeicherKnopf({ status, onSpeichern }: { status: SpeicherStatus; onSpeichern: () => void }) {
-  const nichtsZuTun = status.art === "sauber" || status.art === "gespeichert";
+/** `gesperrt` = Ansichtsmodus: Speichern ist nicht möglich. */
+export function SpeicherKnopf({ status, onSpeichern, gesperrt }: { status: SpeicherStatus; onSpeichern: () => void; gesperrt?: boolean }) {
+  const nichtsZuTun = status.art === "sauber" || status.art === "gespeichert" || status.art === "ansicht";
   return (
-    <Knopf art="primaer" onClick={onSpeichern} disabled={status.art === "speichert" || nichtsZuTun} aria-keyshortcuts="Control+S Meta+S" title="Speichern (Strg+S bzw. Cmd+S)">
+    <Knopf art="primaer" onClick={onSpeichern} disabled={gesperrt || status.art === "speichert" || nichtsZuTun} aria-keyshortcuts="Control+S Meta+S" title={gesperrt ? "Nur Ansicht: Zum Speichern erst die Bearbeitung beginnen oder übernehmen" : "Speichern (Strg+S bzw. Cmd+S)"}>
       {status.art === "speichert" ? "Speichert …" : "Speichern"}
     </Knopf>
   );
 }
 
 /** Summen rechts neben der Maske (ab 1280 px). */
-export function SummenKarte({ preis, status, onSpeichern }: { preis: PreisUebersicht; status: SpeicherStatus; onSpeichern: () => void }) {
+export function SummenKarte({ preis, status, onSpeichern, gesperrt }: { preis: PreisUebersicht; status: SpeicherStatus; onSpeichern: () => void; gesperrt?: boolean }) {
   return (
     <aside className="k-summenleiste k-karte" aria-label="Summen und Speichern">
       <div className="k-karte-inhalt flex flex-col gap-3">
@@ -56,9 +57,9 @@ export function SummenKarte({ preis, status, onSpeichern }: { preis: PreisUebers
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <SpeicherKnopf status={status} onSpeichern={onSpeichern} />
+          <SpeicherKnopf status={status} onSpeichern={onSpeichern} gesperrt={gesperrt} />
           <StatusText status={status} />
-          <span className="k-leise text-xs">Tastenkürzel: Strg+S bzw. Cmd+S</span>
+          <span className="k-leise text-xs">{gesperrt ? "Im Ansichtsmodus wird nichts geändert." : "Wird beim Bearbeiten automatisch gespeichert. Tastenkürzel: Strg+S bzw. Cmd+S"}</span>
         </div>
         <a href="#preisuebersicht" className="k-link text-xs">
           Zur vollständigen Preisübersicht
@@ -69,7 +70,7 @@ export function SummenKarte({ preis, status, onSpeichern }: { preis: PreisUebers
 }
 
 /** Dieselben Summen als Fußleiste (unter 1280 px). */
-export function SummenFuss({ preis, status, onSpeichern }: { preis: PreisUebersicht; status: SpeicherStatus; onSpeichern: () => void }) {
+export function SummenFuss({ preis, status, onSpeichern, gesperrt }: { preis: PreisUebersicht; status: SpeicherStatus; onSpeichern: () => void; gesperrt?: boolean }) {
   return (
     <div className="k-fussleiste" role="region" aria-label="Summen und Speichern">
       <dl className="flex flex-wrap items-baseline gap-x-5 gap-y-0 k-zahl" style={{ textAlign: "left" }}>
@@ -94,7 +95,7 @@ export function SummenFuss({ preis, status, onSpeichern }: { preis: PreisUebersi
       </dl>
       <div className="flex items-center gap-3">
         <StatusText status={status} />
-        <SpeicherKnopf status={status} onSpeichern={onSpeichern} />
+        <SpeicherKnopf status={status} onSpeichern={onSpeichern} gesperrt={gesperrt} />
       </div>
     </div>
   );

@@ -44,7 +44,7 @@ export default async function AngeboteListe({ searchParams }: { searchParams: Su
               {liste.zeilen.length === 0 && <tr><td colSpan={8}>Keine Angebote gefunden.</td></tr>}
               {liste.zeilen.map((a) => (
                 <KlickZeile key={a.id} href={`/alt/angebote/${a.id}`}>
-                  <td><Link prefetch={false} href={`/alt/angebote/${a.id}`}>{a.angebotnr ?? "(ohne Nr.)"}</Link></td>
+                  <td><Link prefetch={false} href={`/alt/angebote/${a.id}`}>{a.angebotnr ?? "(ohne Nr.)"}</Link>{"entwurf" in a && a.entwurf ? <span className="marke" title="Dieses Angebot ist als Entwurf gekennzeichnet">Entwurf</span> : null}</td>
                   <td>{formatDatum(a.angebotsdatum)}</td>
                   <td>{a.name}</td>
                   <td>{a.von_ort}</td>

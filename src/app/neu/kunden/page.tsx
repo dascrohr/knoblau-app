@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { einer, ganzzahl, type SuchParameter } from "@/components/neu/hilfen";
 import { Suchleiste } from "@/components/neu/suchleiste";
-import { Abzeichen, Blaettern, Karte, Leerzustand, Seitenkopf, Tabelle } from "@/components/neu/ui";
+import { Abzeichen, Blaettern, Karte, Knopf, Leerzustand, Seitenkopf, Tabelle } from "@/components/neu/ui";
 import { adressName } from "@/lib/angebot-typen";
 import { listeKunden } from "@/lib/daten";
 import { formatDatum } from "@/lib/preis";
@@ -20,7 +20,15 @@ export default async function Kunden({ searchParams }: { searchParams: SuchParam
 
   return (
     <>
-      <Seitenkopf titel="Kunden" unter="Firmenkunden und alle Auftraggeber aus den Angeboten. Zuletzt aktive zuerst." />
+      <Seitenkopf
+        titel="Kunden"
+        unter="Firmenkunden und alle Auftraggeber aus den Angeboten. Zuletzt aktive zuerst."
+        aktionen={
+          <Knopf href="/neu/kunden/neu" art="primaer">
+            + Neuer Kunde
+          </Knopf>
+        }
+      />
       <Karte randlos>
         <div className="k-karte-inhalt">
           <Suchleiste
@@ -31,7 +39,7 @@ export default async function Kunden({ searchParams }: { searchParams: SuchParam
           />
         </div>
         {liste.zeilen.length === 0 ? (
-          <Leerzustand titel={gefiltert ? "Keine Kunden gefunden" : "Noch keine Kunden"} text={gefiltert ? "Bitte Suchbegriff oder Filter ändern." : "Kunden entstehen automatisch aus den Angeboten."} />
+          <Leerzustand titel={gefiltert ? "Keine Kunden gefunden" : "Noch keine Kunden"} text={gefiltert ? "Bitte Suchbegriff oder Filter ändern." : "Legen Sie den ersten Kunden mit „Neuer Kunde“ an."} />
         ) : (
           <Tabelle beschriftung="Kunden" spalten={["Name", "Ort", "Art", { titel: "Angebote", rechts: true }, "Letzter Kontakt"]}>
             {liste.zeilen.map((k) => (
@@ -40,6 +48,12 @@ export default async function Kunden({ searchParams }: { searchParams: SuchParam
                   <Link href={`/neu/kunden/${k.id}`} className="k-link">
                     {adressName(k) || "ohne Namen"}
                   </Link>
+                  {!k.aktiv ? (
+                    <>
+                      {" "}
+                      <Abzeichen art="warnung">inaktiv</Abzeichen>
+                    </>
+                  ) : null}
                 </td>
                 <td>{[k.plz, k.ort].filter(Boolean).join(" ") || <span className="k-leise">–</span>}</td>
                 <td>{k.art === "firma" ? <Abzeichen art="info">Firma</Abzeichen> : <Abzeichen>Privat</Abzeichen>}</td>

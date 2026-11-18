@@ -21,7 +21,8 @@ export async function proxy(request: NextRequest) {
   );
   const { data } = await supabase.auth.getUser();
   const pfad = request.nextUrl.pathname;
-  const istLogin = pfad === "/login";
+  // Ohne Anmeldung erreichbar: Login, „Passwort vergessen“ und der Rücksprung aus der Passwort-E-Mail.
+  const istLogin = pfad === "/login" || pfad === "/passwort-vergessen" || pfad === "/auth/bestaetigen";
   if (!data.user && !istLogin) {
     if (pfad.startsWith("/api/")) return NextResponse.json({ fehler: "Nicht angemeldet" }, { status: 401 });
     const url = request.nextUrl.clone();

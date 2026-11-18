@@ -1,8 +1,9 @@
 "use client";
-import { memo } from "react";
+import { memo, useState } from "react";
 import { AdressVorschlag } from "@/components/neu/karte";
 import { ADRESS_TITEL, type AdressArt, type Adresse, type Angebot } from "@/lib/angebot-typen";
 import { Feld, Karte, Knopf } from "../ui";
+import { KundenDialog, type KundenTreffer } from "./kunden-dialog";
 import type { Auswahllisten, Setzer } from "./zustand";
 
 const ANREDEN = ["Herr", "Frau", "Familie", "Firma", "Eheleute"];
@@ -52,11 +53,42 @@ export const Adressdaten = memo(function Adressdaten({ angebot, adressen, setzer
     if (belegt && !window.confirm(`Die ${ADRESS_TITEL[nach]} ist schon ausgefüllt. Mit den Daten aus „${ADRESS_TITEL[von]}“ überschreiben?`)) return;
     setzer.adresse(nach, kopie(adressen[von]));
   };
+  const [kundenwahl, setKundenwahl] = useState(false);
+  /** Kunde aus dem Kundenstamm: Anschrift und Kundenbezug immer, Kontaktfelder und Zahlungsbedingung nur, wenn im Angebot noch leer. */
+  const ausKundenstamm = (kunde: KundenTreffer) => {
+    setKundenwahl(false);
+    const belegt = KOPIERFELDER.some((f) => adressen.auftraggeber[f]);
+    if (belegt && !window.confirm("Der Auftraggeber ist schon ausgefüllt. Mit den Daten aus dem Kundenstamm überschreiben?")) return;
+    setzer.adresse("auftraggeber", Object.fromEntries(KOPIERFELDER.map((f) => [f, kunde[f] ?? null])));
+    const kopf: Partial<Angebot> = { kunde_id: kunde.id, kundennr: kunde.kundennr };
+    if (!angebot.telefon_auftraggeber && kunde.telefon) kopf.telefon_auftraggeber = kunde.telefon;
+    if (!angebot.mobil && kunde.mobil) kopf.mobil = kunde.mobil;
+    if (!angebot.telefax && kunde.telefax) kopf.telefax = kunde.telefax;
+    if (!angebot.email && kunde.email) kopf.email = kunde.email;
+    if (!angebot.zahlungsbedingung && kunde.zahlungsbedingung) kopf.zahlungsbedingung = kunde.zahlungsbedingung;
+    setzer.kopf(kopf);
+  };
   return (
     <div id="adressdaten" className="k-abschnitt flex flex-col gap-4">
       <div className="grid gap-4 xl:grid-cols-3 md:grid-cols-2">
-        <Karte titel="Auftraggeber">
+        <Karte
+          titel="Auftraggeber"
+          aktionen={
+            <Knopf klein onClick={() => setKundenwahl(true)} title="Anschrift und Kontaktdaten eines vorhandenen Kunden übernehmen">
+              Aus Kundenstamm
+            </Knopf>
+          }
+        >
           <AdressFelder art="auftraggeber" adresse={adressen.auftraggeber} onAendern={setzer.adresse} />
+          {angebot.kunde_id ? (
+            <p className="k-leise mt-3 text-xs">
+              Verknüpft mit dem Kundenstamm{angebot.kundennr ? ` (Kundennr. ${angebot.kundennr})` : ""}:{" "}
+              <a href={`/neu/kunden/${angebot.kunde_id}`} target="_blank" rel="noopener" className="k-link">
+                Kunde öffnen
+              </a>
+            </p>
+          ) : null}
+          {kundenwahl ? <KundenDialog onWahl={ausKundenstamm} onZu={() => setKundenwahl(false)} /> : null}
         </Karte>
         <Karte
           titel="Beladestelle"

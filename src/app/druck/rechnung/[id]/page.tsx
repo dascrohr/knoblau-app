@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Blatt, Freitext } from "@/components/druck/blatt";
+import { Blatt, DruckHinweis, Freitext, Titel } from "@/components/druck/blatt";
 import { DruckLeiste } from "@/components/druck/drucken-knopf";
-import { ladeRechnung } from "@/lib/daten";
+import { ladeFirma, ladeRechnung } from "@/lib/daten";
 import { formatBetrag, formatDatum, formatZahl, runde2, zeilenSumme } from "@/lib/preis";
 
 export const metadata: Metadata = { title: "Rechnung – Druckansicht" };
@@ -11,7 +11,7 @@ export default async function RechnungDruck({ params }: { params: Promise<{ id: 
   const { id: roh } = await params;
   const id = Number(roh);
   if (!Number.isInteger(id) || id <= 0) notFound();
-  const daten = await ladeRechnung(id);
+  const [daten, firma] = await Promise.all([ladeRechnung(id), ladeFirma()]);
   if (!daten) notFound();
   const { rechnung: r, positionen } = daten;
   const summePos = runde2(positionen.reduce((s, p) => s + (p.netto ?? zeilenSumme(p)), 0));
@@ -24,10 +24,9 @@ export default async function RechnungDruck({ params }: { params: Promise<{ id: 
   return (
     <>
       <DruckLeiste zurueck={`/neu/rechnungen/${r.id}`} />
-      <p className="d-entwurf">
-        <strong>Druckvorlage im Entwurf, keine gültige Rechnungskopie.</strong> Die Zahlen stammen unverändert aus dem Altbestand. Aufbau und Fußzeile (Steuernummer, Bankverbindung) sind mit dem Inhaber abzustimmen.
-      </p>
+      <DruckHinweis firma={firma} />
       <Blatt
+        firma={firma}
         empfaenger={r}
         info={[
           ["Rechnung Nr.", r.rechnungnr],
@@ -39,8 +38,9 @@ export default async function RechnungDruck({ params }: { params: Promise<{ id: 
           ["Fällig am", formatDatum(r.faellig)],
         ]}
       >
-        <h1>Rechnung</h1>
-        <p className="d-unter">{[r.betreff1, r.betreff2].filter(Boolean).join(" · ")}</p>
+        <Titel>Rechnung</Titel>
+        {r.betreff1 || r.betreff2 ? <p className="d-unter">{[r.betreff1, r.betreff2].filter(Boolean).join(" · ")}</p> : null}
+        {firma.text_rechnung_einleitung.trim() ? <p className="d-einleitung">{firma.text_rechnung_einleitung.trim()}</p> : null}
         <Freitext text={r.betreff_text} />
         <table style={{ marginTop: "4mm" }}>
           <thead>
@@ -113,6 +113,11 @@ export default async function RechnungDruck({ params }: { params: Promise<{ id: 
         </table>
         <Freitext titel="Zahlungsbedingungen" text={r.zahlungsbedingung} />
         <Freitext text={r.endetext} />
+        {firma.text_rechnung_schluss.trim() ? (
+          <div className="d-schluss">
+            <Freitext text={firma.text_rechnung_schluss} />
+          </div>
+        ) : null}
       </Blatt>
     </>
   );

@@ -1,4 +1,5 @@
 "use server";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/supabase/server";
 
@@ -22,4 +23,17 @@ export async function abmelden() {
   // Nur dieses Gerät abmelden; andere Browser desselben Nutzers bleiben angemeldet.
   await sb.auth.signOut({ scope: "local" });
   redirect("/login");
+}
+
+/** Schickt eine E-Mail mit einem Link zum Zurücksetzen. Antwortet immer gleich, damit niemand Konten erraten kann. */
+export async function passwortVergessen(_: { ok: boolean; text: string } | null, form: FormData) {
+  const email = String(form.get("email") ?? "").trim().toLowerCase();
+  const antwort = { ok: true, text: "Wenn es zu dieser Adresse ein Konto gibt, ist jetzt eine E-Mail mit einem Link unterwegs. Der Link gilt eine Stunde und muss in diesem Browser geöffnet werden." };
+  if (!/^\S+@\S+\.\S+$/.test(email)) return { ok: false, text: "Bitte eine gültige E-Mail-Adresse eingeben." };
+  const kopf = await headers();
+  const host = kopf.get("x-forwarded-host") ?? kopf.get("host") ?? "knoblau.app";
+  const basis = host.startsWith("localhost") ? `http://${host}` : `https://${host}`;
+  const sb = await db();
+  await sb.auth.resetPasswordForEmail(email, { redirectTo: `${basis}/auth/bestaetigen` });
+  return antwort;
 }

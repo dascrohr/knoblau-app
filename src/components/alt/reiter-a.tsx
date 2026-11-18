@@ -1,9 +1,12 @@
 "use client";
 // Reiter 1 und 2: Adreßdaten, Besichtigungsergebnisse.
 import Link from "next/link";
+import { useState } from "react";
+import type { KundenTreffer } from "@/lib/aktionen";
 import type { AdressArt, Adresse } from "@/lib/angebot-typen";
 import { ADatum, AHaken, AHakenZahl, AMemo, AText, AZahl, AdressFelder, Aus, useMaske } from "./felder";
 import { Gruppe } from "./anzeige";
+import { BausteinKnopf, KundenDialog } from "./dialoge";
 
 export type Auswahl = Record<string, string[]>;
 
@@ -11,6 +14,21 @@ const KOPIER_FELDER = ["anrede", "titel", "vorname", "name", "name1", "name2", "
 
 export function ReiterAdressdaten({ id, auswahl }: { id: number; auswahl: Auswahl }) {
   const m = useMaske();
+  const [kundenSuche, setKundenSuche] = useState(false);
+  const leer = (s: string | null | undefined) => !s || !s.trim();
+  const ausKunde = (k: KundenTreffer) => {
+    const a = m.z.angebot;
+    m.setAdr("auftraggeber", { anrede: k.anrede, titel: k.titel, vorname: k.vorname, name: k.name, name1: k.name1, name2: k.name2, zuhaenden: k.zuhaenden, strasse: k.strasse, lkz: k.lkz, plz: k.plz, ort: k.ort });
+    m.setA({
+      kunde_id: k.id,
+      kundennr: k.kundennr,
+      ...(leer(a.telefon_auftraggeber) && k.telefon ? { telefon_auftraggeber: k.telefon } : {}),
+      ...(leer(a.mobil) && k.mobil ? { mobil: k.mobil } : {}),
+      ...(leer(a.telefax) && k.telefax ? { telefax: k.telefax } : {}),
+      ...(leer(a.email) && k.email ? { email: k.email } : {}),
+    });
+    setKundenSuche(false);
+  };
   const kopiere = (von: AdressArt, nach: AdressArt) => {
     const q = m.z.adressen[von];
     const patch: Partial<Adresse> = {};
@@ -24,12 +42,12 @@ export function ReiterAdressdaten({ id, auswahl }: { id: number; auswahl: Auswah
     <div className="spalten s31">
       <div>
         <div className="reihe">
-          <Aus>Adresse aus Kundenstamm</Aus>
+          <button type="button" className="knopf" disabled={m.lesen} onClick={() => setKundenSuche(true)}>Adresse aus Kundenstamm</button>
           <Aus>Adresse + Leistungen aus Kundenstamm</Aus>
           {k("auftraggeber", "beladestelle", "Angebot → Beladeadresse")}
           {k("beladestelle", "entladestelle", "Belade → Entladeadresse")}
           {k("auftraggeber", "entladestelle", "Angebots → Entladeadresse")}
-          <Aus>Duplizieren</Aus>
+          <button type="button" className="knopf" disabled={m.beschaeftigt} onClick={m.duplizieren} title="Kopie dieses Angebots mit neuer Nummer anlegen">Duplizieren</button>
           <Aus>PLZ-Suche</Aus>
         </div>
         <div className="spalten s3" style={{ ["--lb" as string]: "92px" }}>
@@ -37,6 +55,7 @@ export function ReiterAdressdaten({ id, auswahl }: { id: number; auswahl: Auswah
           <Gruppe titel="Beladestelle"><AdressFelder art="beladestelle" /></Gruppe>
           <Gruppe titel="Entladestelle"><AdressFelder art="entladestelle" /></Gruppe>
         </div>
+        {kundenSuche && !m.lesen && <KundenDialog onWahl={ausKunde} onZu={() => setKundenSuche(false)} />}
         <Gruppe titel="Briefvorlagen">
           <div className="reihe">
             <Aus>Brief 1</Aus>
@@ -119,6 +138,7 @@ export function ReiterBesichtigung({ id, auswahl }: { id: number; auswahl: Auswa
           <ADatum spalte="angebotsdatum" label="Datum Angebot" />
           <AText spalte="umzugsart" label="Umzugsart" liste={auswahl.umzugsart} />
           <AText spalte="status" label="Druck-Status" kurz />
+          <AHaken spalte="entwurf" label="Entwurf" />
           <div className="reihe">
             <Link className="knopf" href={`/neu/angebote/${id}#route`}>Route berechnen + zeigen</Link>
           </div>
@@ -145,6 +165,7 @@ export function ReiterBesichtigung({ id, auswahl }: { id: number; auswahl: Auswa
         </Gruppe>
       </div>
       <Gruppe titel="Vereinbarungen als Vertragsbestandteil">
+        <div className="reihe"><BausteinKnopf spalte="vereinbarungen" bereich="vereinbarungen">Textbaustein einfügen</BausteinKnopf></div>
         <AMemo spalte="vereinbarungen" label="Vereinbarungen als Vertragsbestandteil" zeilen={7} />
       </Gruppe>
     </div>

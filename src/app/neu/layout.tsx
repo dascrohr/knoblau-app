@@ -22,9 +22,9 @@ export default async function NeuLayout({ children }: { children: React.ReactNod
         istAdmin={nutzer.rolle === "admin"}
         kopfRechts={
           <>
-            <span className="hidden truncate sm:inline k-leise" title="Angemeldet als">
+            <a href="/konto" className="hidden truncate sm:inline k-leise underline-offset-2 hover:underline" title="Mein Konto: Passwort ändern">
               {nutzer.name || nutzer.email}
-            </span>
+            </a>
             <form action={abmelden}>
               <button type="submit" className="k-knopf k-knopf-still k-knopf-klein">
                 Abmelden

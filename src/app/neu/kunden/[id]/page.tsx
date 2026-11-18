@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Anschrift, Datenliste } from "@/components/neu/datenliste";
+import { Datenliste } from "@/components/neu/datenliste";
+import { KundenFormular } from "@/components/neu/kunden-formular";
 import { Abzeichen, Karte, Knopf, Seitenkopf, Tabelle } from "@/components/neu/ui";
 import { adressName } from "@/lib/angebot-typen";
-import { ladeKunde } from "@/lib/daten";
+import { ladeAuswahl, ladeKunde } from "@/lib/daten";
 import { formatBetrag, formatDatum } from "@/lib/preis";
 
 export const metadata: Metadata = { title: "Kunde" };
@@ -13,7 +14,7 @@ export default async function KundeSeite({ params }: { params: Promise<{ id: str
   const { id: roh } = await params;
   const id = Number(roh);
   if (!Number.isInteger(id) || id <= 0) notFound();
-  const daten = await ladeKunde(id);
+  const [daten, zahlungsbedingungen] = await Promise.all([ladeKunde(id), ladeAuswahl("zahlungsbedingung")]);
   if (!daten) notFound();
   const { kunde: k, angebote, rechnungen } = daten;
 
@@ -34,41 +35,35 @@ export default async function KundeSeite({ params }: { params: Promise<{ id: str
           </Knopf>
         }
       />
-      <div className="grid gap-4 lg:grid-cols-3">
-        <Karte titel="Anschrift">
-          <Anschrift a={k} />
+      <div className="grid items-start gap-4 lg:grid-cols-3">
+        <Karte titel="Stammdaten" className="lg:col-span-2">
+          <KundenFormular kunde={k} zahlungsbedingungen={zahlungsbedingungen} />
         </Karte>
-        <Karte titel="Kontakt">
-          <Datenliste
-            eintraege={[
-              ["Telefon", k.telefon ? <a className="k-link" href={`tel:${k.telefon.replace(/[^\d+]/g, "")}`}>{k.telefon}</a> : null],
-              ["Telefon 2", k.telefon2],
-              ["Mobil", k.mobil ? <a className="k-link" href={`tel:${k.mobil.replace(/[^\d+]/g, "")}`}>{k.mobil}</a> : null],
-              ["Fax", k.telefax],
-              ["E-Mail", k.email ? <a className="k-link" href={`mailto:${k.email}`}>{k.email}</a> : null],
-              ["Internet", k.internet],
-            ]}
-          />
-        </Karte>
-        <Karte titel="Kundendaten">
-          <Datenliste
-            eintraege={[
-              ["Erster Kontakt", formatDatum(k.erstmals)],
-              ["Letzter Kontakt", formatDatum(k.letzter)],
-              ["Angebote", String(k.anzahl_angebote)],
-              ["Umsatz", k.umsatz != null ? `${formatBetrag(k.umsatz)} €` : null],
-              ["Umsatz Vorjahr", k.umsatz_vj != null ? `${formatBetrag(k.umsatz_vj)} €` : null],
-              ["USt-IdNr.", k.ustid],
-              ["Zahlungsbedingung", k.zahlungsbedingung],
-            ]}
-          />
-        </Karte>
+        <div className="flex flex-col gap-4">
+          <Karte titel="Schnellkontakt">
+            <Datenliste
+              eintraege={[
+                ["Telefon", k.telefon ? <a className="k-link" href={`tel:${k.telefon.replace(/[^\d+]/g, "")}`}>{k.telefon}</a> : null],
+                ["Telefon 2", k.telefon2 ? <a className="k-link" href={`tel:${k.telefon2.replace(/[^\d+]/g, "")}`}>{k.telefon2}</a> : null],
+                ["Mobil", k.mobil ? <a className="k-link" href={`tel:${k.mobil.replace(/[^\d+]/g, "")}`}>{k.mobil}</a> : null],
+                ["E-Mail", k.email ? <a className="k-link" href={`mailto:${k.email}`}>{k.email}</a> : null],
+              ]}
+            />
+          </Karte>
+          <Karte titel="Kundendaten">
+            <Datenliste
+              eintraege={[
+                ["Kundennr.", k.kundennr != null ? String(k.kundennr) : null],
+                ["Erster Kontakt", formatDatum(k.erstmals)],
+                ["Letzter Kontakt", formatDatum(k.letzter)],
+                ["Angebote", String(k.anzahl_angebote)],
+                ["Umsatz", k.umsatz != null ? `${formatBetrag(k.umsatz)} €` : null],
+                ["Umsatz Vorjahr", k.umsatz_vj != null ? `${formatBetrag(k.umsatz_vj)} €` : null],
+              ]}
+            />
+          </Karte>
+        </div>
       </div>
-      {k.info ? (
-        <Karte titel="Notizen" className="mt-4">
-          <p className="whitespace-pre-wrap">{k.info}</p>
-        </Karte>
-      ) : null}
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <Karte titel={`Angebote (${angebote.length})`} randlos>
           {angebote.length === 0 ? (

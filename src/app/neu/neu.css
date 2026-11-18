@@ -664,12 +664,104 @@
   background: var(--k-schwarz);
   color: var(--k-text-invers);
 }
+/* Feste Leiste der Maske: Übergabe-Leiste + Sprungnavigation. Ihre Höhe misst die Maske und legt sie in --k-maskenkopf-hoehe ab. */
+.neu .k-maskenkopf {
+  position: sticky;
+  top: var(--k-kopf-hoehe);
+  z-index: 20;
+  margin: 0 calc(-1 * var(--k-a5)) var(--k-a4);
+  background: var(--k-flaeche);
+  border-bottom: 1px solid var(--k-rahmen);
+}
+.neu .k-maskenkopf .k-abschnittsleiste {
+  position: static;
+  margin: 0;
+  border-bottom: 0;
+}
+.neu .k-uebergabe {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--k-flaeche-3);
+  font-size: var(--k-text-s);
+}
+.neu .k-uebergabe-zeile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-a1) var(--k-a4);
+  min-height: 2.5rem;
+  padding: 0.25rem var(--k-a5);
+  border-left: 4px solid transparent;
+  color: var(--k-text-2);
+}
+.neu .k-uebergabe-zeile + .k-uebergabe-zeile {
+  border-top: 1px solid var(--k-flaeche-3);
+}
+.neu .k-uebergabe-zeile[data-art="warnung"] {
+  background: var(--k-warnung-hell);
+  border-left-color: var(--k-warnung);
+  color: var(--k-text);
+  font-weight: 600;
+  font-size: var(--k-text-m);
+}
+.neu .k-uebergabe-zeile[data-art="info"] {
+  background: var(--k-info-hell);
+  border-left-color: var(--k-info);
+  color: var(--k-text);
+}
+.neu .k-uebergabe-zeile[data-art="fehler"] {
+  background: var(--k-fehler-hell);
+  border-left-color: var(--k-fehler);
+  color: var(--k-text);
+  font-weight: 600;
+}
+.neu .k-uebergabe-text {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+.neu .k-uebergabe-rechts {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--k-a2) var(--k-a3);
+}
+.neu .k-uebergabe .k-knopf {
+  height: 2rem;
+  font-size: var(--k-text-s);
+}
+/* Ansichtsmodus: Das fieldset sperrt alle Eingaben; es soll selbst nicht sichtbar sein und darf schrumpfen. */
+.neu .k-maske-feldsatz {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+.neu .k-maske-feldsatz:disabled .k-schalter,
+.neu .k-maske-feldsatz:disabled .k-schalter input,
+.neu .k-schalter:has(input:disabled),
+.neu .k-schalter input:disabled {
+  cursor: not-allowed;
+}
+.neu .k-maske-feldsatz:disabled input[type="checkbox"] {
+  opacity: 0.7;
+}
+.neu .k-baustein-knopf {
+  align-self: flex-start;
+  padding: 0 var(--k-a2);
+  color: var(--k-marke-dunkel);
+}
 .neu .k-abschnitt {
-  scroll-margin-top: calc(var(--k-kopf-hoehe) + 3.75rem);
+  scroll-margin-top: calc(var(--k-kopf-hoehe) + var(--k-maskenkopf-hoehe, 5.5rem) + 0.75rem);
+}
+/* Fokussierte Felder nicht unter den festen Leisten (oben Übergabe/Sprungnavigation, unten Summen) verstecken. */
+.neu .k-maske :is(input, select, textarea, button) {
+  scroll-margin-top: calc(var(--k-kopf-hoehe) + var(--k-maskenkopf-hoehe, 5.5rem) + 0.75rem);
+  scroll-margin-bottom: 5.5rem;
 }
 .neu .k-summenleiste {
   position: sticky;
-  top: calc(var(--k-kopf-hoehe) + 3.75rem);
+  top: calc(var(--k-kopf-hoehe) + var(--k-maskenkopf-hoehe, 5.5rem) + 1rem);
 }
 .neu .k-summenzeile {
   display: flex;
@@ -719,10 +811,43 @@
     padding-left: var(--k-a3);
     padding-right: var(--k-a3);
   }
+  .neu .k-maskenkopf {
+    margin-left: calc(-1 * var(--k-a3));
+    margin-right: calc(-1 * var(--k-a3));
+  }
+  .neu .k-maskenkopf .k-abschnittsleiste {
+    margin: 0;
+  }
+  .neu .k-uebergabe-zeile {
+    padding-left: var(--k-a3);
+    padding-right: var(--k-a3);
+  }
   .neu .k-fussleiste {
     margin: var(--k-a4) calc(-1 * var(--k-a3)) calc(-1 * var(--k-a4));
     padding: var(--k-a2) var(--k-a3);
   }
+}
+/* Tablet und Touch: Knöpfe der festen Leisten mindestens 40 px hoch; Sprungnavigation mit größeren Zielen. */
+@media (max-width: 1279px), (pointer: coarse) {
+  .neu .k-uebergabe .k-knopf,
+  .neu .k-fussleiste .k-knopf {
+    height: 2.5rem;
+    min-width: 2.5rem;
+  }
+  .neu .k-abschnittsleiste a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+  }
+}
+/* Eingabetabellen (Positionen, Termine, Checkliste) werden auf schmalen Bildschirmen nicht gequetscht oder abgeschnitten,
+   sondern innerhalb der Karte waagerecht gescrollt (.k-tabelle-rahmen hat overflow-x: auto). */
+.neu .k-tabelle-rahmen {
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+.neu .k-tabelle-eingabe {
+  min-width: 44rem;
 }
 .neu .k-speicherstatus {
   display: inline-flex;
