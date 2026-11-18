@@ -211,8 +211,8 @@ async function geokodiere(a: AdressEingabe, name: string, signal: AbortSignal): 
   }
   if (grob) return grob;
   // Letzter Versuch für Auslandsumzüge ohne Länderkennzeichen: europaweit suchen, Ergebnis gilt als ungenau.
-  if (!land) {
-    const weit = new URLSearchParams({ text: [ort, plz].filter(Boolean).join(" ").replace(/[\/|]/g, " "), lang: "de", size: "1", layers: "locality,localadmin,postalcode,county,region" });
+  if (!land && ort) {
+    const weit = new URLSearchParams({ text: (ort ?? "").replace(/[\/|]/g, " "), lang: "de", size: "1", layers: "locality,localadmin,county,region", "boundary.country": "DE,AT,CH,NL,BE,LU,FR,DK,PL,CZ,IT,ES,PT,GB,IE,SE,NO,FI,GR,HU,SK,SI,HR,RO,BG,EE,LV,LT,TR,RS,BA,ME,MK,AL,CY,MT,LI" });
     try {
       const t = features(await ruf(`${ORS_PFAD_SUCHE}?${weit}`, { method: "GET" }, signal)).map(zuTreffer).find(Boolean);
       if (t) return { lon: t.lon, lat: t.lat, label: t.label, genau: false };
