@@ -1,0 +1,15 @@
+# Daten und Schlüssel kommen nie ins Repository
+*.sqlite
+*.sqlite3
+*.db
+*.dbf
+*.fpt
+*.cdx
+.env*
+data/
+# Build
+node_modules/
+.next/
+.vercel/
+*.log
+.DS_Store
