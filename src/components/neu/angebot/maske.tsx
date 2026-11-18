@@ -179,6 +179,9 @@ export function AngebotMaske({ start, listen, stammLeistungen, stammPackmaterial
         }
         aktionen={
           <>
+            <a href={`/druck/angebot/${angebot.id}`} target="_blank" rel="noopener" className="k-knopf k-knopf-sekundaer" title="Zeigt den zuletzt gespeicherten Stand">
+              Druckansicht
+            </a>
             <Knopf href="/neu/angebote" art="still">
               ← Zur Liste
             </Knopf>

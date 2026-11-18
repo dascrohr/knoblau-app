@@ -802,3 +802,16 @@
 .neu details.k-karte:not([open]) > summary {
   border-bottom: 0;
 }
+
+/* Menü-Knopf: immer sichtbar. Breite Bildschirme: Navigation ein-/ausklappen (mehr Platz für die Maske). */
+.neu .k-knopf.k-nav-knopf {
+  display: inline-flex;
+}
+@media (min-width: 1024px) {
+  .neu .k-geruest[data-eingeklappt="true"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .neu .k-geruest[data-eingeklappt="true"] .k-seitennav {
+    display: none;
+  }
+}

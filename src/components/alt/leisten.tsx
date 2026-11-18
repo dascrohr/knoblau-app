@@ -49,7 +49,12 @@ export function Symbolleiste(p: {
       <NavKnopf ziel={p.nachbarn?.vor} aktuell={p.aktuell} zeichen="▶" text="Datensatz vor" />
       <NavKnopf ziel={p.nachbarn?.letzter} aktuell={p.aktuell} zeichen="▶|" text="Letzter Datensatz" />
       <span className="trenn" />
-      <button type="button" className="knopf" onClick={() => window.print()}>Drucken</button>
+      <button type="button" className="knopf" onClick={() => {
+        // Angebot oder Rechnung: eigene Druckansicht öffnen, sonst die Seite drucken.
+        const m = /^\/alt\/(angebote|rechnungen)\/(\d+)/.exec(window.location.pathname);
+        if (m) window.open(`/druck/${m[1] === "angebote" ? "angebot" : "rechnung"}/${m[2]}`, "_blank", "noopener");
+        else window.print();
+      }}>Drucken</button>
       <Link className="knopf" href={p.sucheHref ?? "/alt/angebote"}>Suche</Link>
       <span className="trenn" />
       <button type="button" className="knopf" onClick={neu} disabled={laeuft}>{laeuft ? "Neu …" : "Neu"}</button>

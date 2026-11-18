@@ -34,6 +34,9 @@ export default async function RechnungSeite({ params }: { params: Promise<{ id: 
         }
         aktionen={
           <>
+            <a href={`/druck/rechnung/${r.id}`} target="_blank" rel="noopener" className="k-knopf k-knopf-sekundaer">
+              Druckansicht
+            </a>
             {r.angebot_id ? <Knopf href={`/neu/angebote/${r.angebot_id}`}>Zum Angebot {r.angebotnr ?? ""}</Knopf> : null}
             <Knopf href="/neu/rechnungen" art="still">
               ← Zur Rechnungsliste

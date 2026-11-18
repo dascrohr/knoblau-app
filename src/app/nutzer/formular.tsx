@@ -1,6 +1,6 @@
 "use client";
-import { useActionState, useTransition } from "react";
-import { nutzerAendern, nutzerAnlegen } from "@/lib/aktionen";
+import { useActionState, useState, useTransition } from "react";
+import { nutzerAendern, nutzerAnlegen, nutzerLoeschen } from "@/lib/aktionen";
 
 const feld = "rounded-md border border-neutral-300 px-3 py-2 font-normal outline-none focus:border-neutral-900";
 
@@ -25,6 +25,7 @@ export function NutzerFormular() {
 
 export function NutzerZeile({ nutzer, istIch }: { nutzer: { id: string; email: string; name: string | null; rolle: string; aktiv: boolean }; istIch: boolean }) {
   const [laeuft, start] = useTransition();
+  const [meldung, setMeldung] = useState<string | null>(null);
   return (
     <tr className="border-b border-neutral-200">
       <td className="py-2">{nutzer.email}</td>
@@ -37,6 +38,22 @@ export function NutzerZeile({ nutzer, istIch }: { nutzer: { id: string; email: s
             {nutzer.aktiv ? "Sperren" : "Freischalten"}
           </button>
         )}
+        {!istIch && (
+          <button
+            disabled={laeuft}
+            onClick={() => {
+              if (!window.confirm(`Nutzer ${nutzer.email} endgültig löschen? Die Anmeldung ist danach nicht mehr möglich. Gespeicherte Angebote bleiben erhalten.`)) return;
+              start(async () => {
+                const e = await nutzerLoeschen(nutzer.id);
+                setMeldung(e.ok ? null : e.fehler);
+              });
+            }}
+            className="ml-2 rounded border border-red-300 px-2 py-1 text-xs text-red-800 disabled:opacity-60"
+          >
+            Löschen
+          </button>
+        )}
+        {meldung && <span role="alert" className="ml-2 text-xs text-red-800">{meldung}</span>}
       </td>
     </tr>
   );

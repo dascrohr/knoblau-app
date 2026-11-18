@@ -185,3 +185,16 @@ export async function nutzerAendern(id: string, werte: { aktiv?: boolean; rolle?
   revalidatePath("/nutzer");
   return { ok: true, daten: undefined };
 }
+
+/** Löscht einen Nutzer endgültig (Anmeldung und Profil). Nur Admin, nicht das eigene Konto. */
+export async function nutzerLoeschen(id: string): Promise<Ergebnis> {
+  const ich = await erfordereNutzer();
+  if (ich.rolle !== "admin") return fehler("Nur der Admin darf Nutzer löschen.");
+  if (id === ich.id) return fehler("Das eigene Konto lässt sich hier nicht löschen.");
+  const admin = adminDb();
+  const { error } = await admin.auth.admin.deleteUser(id);
+  if (error) return fehler("Nutzer konnte nicht gelöscht werden.");
+  await admin.from("profile").delete().eq("id", id);
+  revalidatePath("/nutzer");
+  return { ok: true, daten: undefined };
+}

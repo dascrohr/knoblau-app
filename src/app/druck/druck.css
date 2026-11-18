@@ -1,0 +1,66 @@
+/* Druckansichten (Angebot, Rechnung). Alles unter .druck, eigenes Layout für A4. */
+.druck {
+  --d-rot: #e1001a;
+  --d-text: #1d1d1d;
+  --d-grau: #6b6b6b;
+  --d-linie: #cfcfcf;
+  background: #e9e9e9;
+  color: var(--d-text);
+  min-height: 100vh;
+  padding: 16px 12px 48px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.4;
+}
+.druck .d-leiste { max-width: 210mm; margin: 0 auto 12px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.druck .d-knopf { border: 1px solid #b9b9b9; background: #fff; border-radius: 6px; padding: 8px 14px; font: inherit; font-size: 14px; color: inherit; text-decoration: none; cursor: pointer; }
+.druck .d-knopf-haupt { background: var(--d-rot); border-color: var(--d-rot); color: #fff; font-weight: 600; }
+.druck .d-leiste-hinweis { font-size: 12px; color: var(--d-grau); }
+.druck .d-entwurf { max-width: 210mm; margin: 0 auto 12px; background: #fff7d6; border: 1px solid #e6cf7a; border-radius: 6px; padding: 8px 12px; font-size: 13px; }
+.druck .d-blatt { background: #fff; width: 210mm; max-width: 100%; min-height: 297mm; margin: 0 auto; padding: 14mm 16mm 12mm 22mm; box-shadow: 0 2px 12px rgb(0 0 0 / 0.18); display: flex; flex-direction: column; }
+.druck .d-kopf { display: flex; justify-content: space-between; align-items: flex-start; gap: 10mm; border-bottom: 2px solid var(--d-rot); padding-bottom: 5mm; }
+.druck .d-logo { height: 24mm; width: auto; }
+.druck .d-kopf-firma { display: flex; flex-direction: column; text-align: right; font-size: 9pt; color: var(--d-grau); }
+.druck .d-kopf-firma strong { color: var(--d-text); font-size: 11pt; }
+.druck .d-adresszeile { display: flex; justify-content: space-between; gap: 10mm; margin-top: 12mm; min-height: 38mm; }
+.druck .d-anschrift { width: 85mm; }
+.druck .d-absender { font-size: 7pt; color: var(--d-grau); border-bottom: 0.5px solid var(--d-linie); margin-bottom: 2.5mm; padding-bottom: 0.5mm; white-space: nowrap; overflow: hidden; }
+.druck .d-leer { color: var(--d-grau); font-style: italic; }
+.druck .d-info { margin: 0; font-size: 9.5pt; min-width: 58mm; }
+.druck .d-info > div { display: flex; justify-content: space-between; gap: 6mm; padding: 0.6mm 0; }
+.druck .d-info dt { color: var(--d-grau); }
+.druck .d-info dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums; }
+.druck .d-inhalt { flex: 1; margin-top: 8mm; }
+.druck h1 { font-size: 15pt; margin: 0 0 1mm; letter-spacing: 0.02em; }
+.druck .d-unter { color: var(--d-grau); margin: 0 0 5mm; }
+.druck h2 { font-size: 10.5pt; margin: 6mm 0 1.5mm; text-transform: uppercase; letter-spacing: 0.06em; color: var(--d-rot); }
+.druck h3 { font-size: 10pt; margin: 5mm 0 1mm; }
+.druck .d-orte { display: grid; grid-template-columns: 1fr 1fr; gap: 8mm; margin: 2mm 0 2mm; }
+.druck .d-orte h3 { margin-top: 0; }
+.druck .d-orte p { margin: 0; }
+.druck .d-klein { font-size: 9pt; color: var(--d-grau); }
+.druck table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.druck th { text-align: left; font-size: 8pt; font-weight: 600; color: var(--d-grau); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1px solid var(--d-text); padding: 1mm 1.5mm 1mm 0; }
+.druck td { padding: 1.2mm 1.5mm 1.2mm 0; border-bottom: 0.5px solid var(--d-linie); vertical-align: top; }
+.druck .r { text-align: right; padding-right: 0; white-space: nowrap; }
+.druck th.r { padding-right: 0; }
+.druck .d-hinweiszeile td { color: var(--d-grau); font-style: italic; }
+.druck .d-zwischen td { border-bottom: 0; font-weight: 600; padding-top: 1.5mm; }
+.druck tr { break-inside: avoid; }
+.druck .d-summen { margin: 7mm 0 0 auto; width: 82mm; break-inside: avoid; }
+.druck .d-summen td { border-bottom: 0; padding: 0.8mm 0; }
+.druck .d-summen .d-gesamt td { border-top: 1.5px solid var(--d-text); border-bottom: 3px double var(--d-text); font-weight: 700; font-size: 12pt; padding: 1.6mm 0; }
+.druck .d-text { break-inside: avoid-page; }
+.druck .d-text p { margin: 0; white-space: pre-wrap; }
+.druck .d-vertrag p { font-size: 9pt; }
+.druck .d-unterschrift { display: grid; grid-template-columns: 1fr 1fr; gap: 14mm; margin-top: 16mm; break-inside: avoid; font-size: 9pt; color: var(--d-grau); }
+.druck .d-unterschrift div { border-top: 0.5px solid var(--d-text); padding-top: 1mm; }
+.druck .d-fuss { margin-top: 8mm; border-top: 1px solid var(--d-linie); padding-top: 2.5mm; display: flex; flex-direction: column; text-align: center; font-size: 7.5pt; color: var(--d-grau); }
+@page { size: A4; margin: 12mm 0; }
+@media print {
+  html, body { background: #fff !important; }
+  .druck { background: #fff; padding: 0; min-height: 0; }
+  .druck .d-leiste, .druck .d-entwurf { display: none; }
+  .druck .d-blatt { box-shadow: none; width: auto; min-height: 0; padding: 2mm 16mm 0 22mm; display: block; }
+  .druck .d-fuss { margin-top: 10mm; }
+}

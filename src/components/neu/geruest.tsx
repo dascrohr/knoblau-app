@@ -15,10 +15,11 @@ const PUNKTE = [
 
 export function Geruest({ istAdmin, kopfRechts, children }: { istAdmin: boolean; kopfRechts: ReactNode; children: ReactNode }) {
   const pfad = usePathname() || "";
-  const [offen, setOffen] = useState(false);
+  const [offen, setOffen] = useState(false); // schmale Bildschirme: Navigation eingeblendet
+  const [eingeklappt, setEingeklappt] = useState(false); // breite Bildschirme: Navigation ausgeblendet
   const zu = () => setOffen(false);
   return (
-    <div className="k-geruest">
+    <div className="k-geruest" data-eingeklappt={eingeklappt}>
       <button type="button" className="k-nav-schleier" data-offen={offen} aria-label="Navigation schließen" onClick={zu} tabIndex={offen ? 0 : -1} />
       <aside id="k-seitennav" className="k-seitennav" data-offen={offen}>
         <Link href="/neu/angebote" className="k-logo" onClick={zu} aria-label="Knoblau & Sohn – zur Angebotsliste">
@@ -42,7 +43,7 @@ export function Geruest({ istAdmin, kopfRechts, children }: { istAdmin: boolean;
       </aside>
       <div className="min-w-0">
         <header className="k-kopf">
-          <button type="button" className="k-knopf k-knopf-sekundaer k-nav-knopf" aria-expanded={offen} aria-controls="k-seitennav" onClick={() => setOffen((o) => !o)}>
+          <button type="button" className="k-knopf k-knopf-sekundaer k-nav-knopf" aria-controls="k-seitennav" title="Navigation ein- oder ausblenden" onClick={() => { setOffen((o) => !o); setEingeklappt((e) => !e); }}>
             <span aria-hidden="true">☰</span> Menü
           </button>
           <AnsichtUmschalter className="k-segment" aktivClassName="k-segment-aktiv" />
