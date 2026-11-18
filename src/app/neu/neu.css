@@ -1,0 +1,786 @@
+/*
+ * Design-System der Neuansicht. Alles hängt an der Wurzelklasse `.neu`,
+ * damit nichts in die Altansicht ausstrahlt. Doku: docs/design-system.md
+ * Markenfarben von umzuege-transporte-koeln.de: Rot #e1001a, Schwarz #282828.
+ */
+.neu {
+  /* Marke */
+  --k-marke: #e1001a;
+  --k-marke-dunkel: #c00008;
+  --k-marke-hell: #fdecee;
+  --k-schwarz: #282828;
+
+  /* Flächen */
+  --k-grund: #f4f4f4;
+  --k-flaeche: #ffffff;
+  --k-flaeche-2: #f8f8f8;
+  --k-flaeche-3: #ebebeb;
+
+  /* Text */
+  --k-text: #1f1f1f;
+  --k-text-2: #505050;
+  --k-text-3: #6b6b6b;
+  --k-text-invers: #ffffff;
+
+  /* Rahmen */
+  --k-rahmen: #dadada;
+  --k-rahmen-stark: #a7a7a7;
+
+  /* Zustände (Text auf heller Fläche jeweils mind. 4,5:1) */
+  --k-erfolg: #17693a;
+  --k-erfolg-hell: #e6f4ea;
+  --k-warnung: #8a5a00;
+  --k-warnung-hell: #fff4d6;
+  --k-fehler: #b00014;
+  --k-fehler-hell: #fdecee;
+  --k-info: #1d4f8c;
+  --k-info-hell: #e8f0fb;
+
+  /* Typografie */
+  --k-schrift: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --k-schrift-titel: var(--k-font-poppins, var(--k-schrift));
+  --k-text-xs: 0.75rem;
+  --k-text-s: 0.8125rem;
+  --k-text-m: 0.875rem;
+  --k-text-l: 1rem;
+  --k-text-xl: 1.25rem;
+  --k-text-xxl: 1.5rem;
+
+  /* Abstände (4er-Raster) */
+  --k-a1: 0.25rem;
+  --k-a2: 0.5rem;
+  --k-a3: 0.75rem;
+  --k-a4: 1rem;
+  --k-a5: 1.5rem;
+  --k-a6: 2rem;
+
+  /* Form */
+  --k-radius: 6px;
+  --k-radius-gross: 10px;
+  --k-schatten: 0 1px 2px rgb(0 0 0 / 0.06), 0 1px 3px rgb(0 0 0 / 0.08);
+  --k-schatten-gross: 0 8px 28px rgb(0 0 0 / 0.18);
+  --k-fokus: 0 0 0 2px #ffffff, 0 0 0 4px #1d4f8c;
+
+  /* Maße */
+  --k-kopf-hoehe: 3.5rem;
+  --k-nav-breite: 14rem;
+  --k-feld-hoehe: 2.25rem;
+
+  min-height: 100vh;
+  background: var(--k-grund);
+  color: var(--k-text);
+  font-family: var(--k-schrift);
+  font-size: var(--k-text-m);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+.neu *:focus-visible {
+  outline: none;
+  box-shadow: var(--k-fokus);
+  border-radius: var(--k-radius);
+}
+
+.neu h1,
+.neu h2,
+.neu h3 {
+  font-family: var(--k-schrift-titel);
+  color: var(--k-schwarz);
+  line-height: 1.25;
+}
+
+.neu a.k-link {
+  color: var(--k-marke-dunkel);
+  font-weight: 600;
+  text-decoration: none;
+}
+.neu a.k-link:hover {
+  text-decoration: underline;
+}
+
+.neu .k-zahl {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+.neu .k-leise {
+  color: var(--k-text-3);
+}
+
+/* ------------------------------------------------------------ Gerüst */
+.neu .k-geruest {
+  display: grid;
+  grid-template-columns: var(--k-nav-breite) minmax(0, 1fr);
+  min-height: 100vh;
+}
+.neu .k-seitennav {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--k-flaeche);
+  border-right: 1px solid var(--k-rahmen);
+  z-index: 40;
+}
+.neu .k-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--k-a4) var(--k-a4) var(--k-a3);
+  border-bottom: 1px solid var(--k-flaeche-3);
+}
+.neu .k-navliste {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--k-a3) var(--k-a2);
+  overflow-y: auto;
+}
+.neu .k-navlink {
+  display: flex;
+  align-items: center;
+  gap: var(--k-a3);
+  padding: 0.55rem var(--k-a3);
+  border-radius: var(--k-radius);
+  border-left: 3px solid transparent;
+  color: var(--k-text-2);
+  font-weight: 500;
+  text-decoration: none;
+}
+.neu .k-navlink:hover {
+  background: var(--k-flaeche-2);
+  color: var(--k-schwarz);
+}
+.neu .k-navlink[aria-current="page"] {
+  background: var(--k-marke-hell);
+  border-left-color: var(--k-marke);
+  color: var(--k-marke-dunkel);
+  font-weight: 600;
+}
+.neu .k-navtrenner {
+  margin: var(--k-a2) var(--k-a3);
+  border-top: 1px solid var(--k-flaeche-3);
+}
+.neu .k-kopf {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  height: var(--k-kopf-hoehe);
+  display: flex;
+  align-items: center;
+  gap: var(--k-a3);
+  padding: 0 var(--k-a5);
+  background: var(--k-flaeche);
+  border-bottom: 1px solid var(--k-rahmen);
+}
+.neu .k-inhalt {
+  padding: var(--k-a5);
+  max-width: 100rem;
+}
+.neu .k-nav-knopf {
+  display: none;
+}
+.neu .k-nav-schleier {
+  display: none;
+}
+@media (max-width: 1023px) {
+  .neu .k-geruest {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .neu .k-seitennav {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(18rem, 85vw);
+    transform: translateX(-100%);
+    transition: transform 0.18s ease;
+    box-shadow: var(--k-schatten-gross);
+    visibility: hidden;
+  }
+  .neu .k-seitennav[data-offen="true"] {
+    transform: none;
+    visibility: visible;
+  }
+  .neu .k-nav-schleier[data-offen="true"] {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 35;
+    background: rgb(0 0 0 / 0.35);
+    border: 0;
+  }
+  .neu .k-nav-knopf {
+    display: inline-flex;
+  }
+  .neu .k-kopf {
+    padding: 0 var(--k-a3);
+  }
+  .neu .k-inhalt {
+    padding: var(--k-a4) var(--k-a3);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .neu * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Segment-Schalter (Altansicht / Neuansicht) */
+.neu .k-segment {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+  background: var(--k-flaeche-3);
+  border-radius: 999px;
+}
+.neu .k-segment a {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: var(--k-text-s);
+  font-weight: 600;
+  color: var(--k-text-2);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.neu .k-segment a:hover {
+  color: var(--k-schwarz);
+}
+.neu .k-segment a.k-segment-aktiv {
+  background: var(--k-flaeche);
+  color: var(--k-schwarz);
+  box-shadow: var(--k-schatten);
+}
+
+/* ------------------------------------------------------------ Knopf */
+.neu .k-knopf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--k-a2);
+  height: var(--k-feld-hoehe);
+  padding: 0 var(--k-a4);
+  border: 1px solid transparent;
+  border-radius: var(--k-radius);
+  font: inherit;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+.neu .k-knopf:disabled,
+.neu .k-knopf[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.neu .k-knopf-klein {
+  height: 1.75rem;
+  padding: 0 var(--k-a3);
+  font-size: var(--k-text-s);
+}
+.neu .k-knopf-primaer {
+  background: var(--k-marke);
+  color: var(--k-text-invers);
+}
+.neu .k-knopf-primaer:hover:not(:disabled) {
+  background: var(--k-marke-dunkel);
+}
+.neu .k-knopf-sekundaer {
+  background: var(--k-flaeche);
+  border-color: var(--k-rahmen-stark);
+  color: var(--k-schwarz);
+}
+.neu .k-knopf-sekundaer:hover:not(:disabled) {
+  background: var(--k-flaeche-2);
+  border-color: var(--k-schwarz);
+}
+.neu .k-knopf-still {
+  background: transparent;
+  color: var(--k-text-2);
+}
+.neu .k-knopf-still:hover:not(:disabled) {
+  background: var(--k-flaeche-3);
+  color: var(--k-schwarz);
+}
+.neu .k-knopf-gefahr {
+  background: var(--k-flaeche);
+  border-color: var(--k-fehler);
+  color: var(--k-fehler);
+}
+.neu .k-knopf-gefahr:hover:not(:disabled) {
+  background: var(--k-fehler);
+  color: var(--k-text-invers);
+}
+
+/* ------------------------------------------------------------ Felder */
+.neu .k-feld {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.neu .k-label {
+  font-size: var(--k-text-xs);
+  font-weight: 600;
+  color: var(--k-text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.neu .k-eingabe,
+.neu .k-feld input:not([type="checkbox"]):not([type="radio"]),
+.neu .k-feld select,
+.neu .k-feld textarea {
+  width: 100%;
+  min-width: 0;
+  height: var(--k-feld-hoehe);
+  padding: 0 0.6rem;
+  background: var(--k-flaeche);
+  border: 1px solid var(--k-rahmen-stark);
+  border-radius: var(--k-radius);
+  color: var(--k-text);
+  font: inherit;
+}
+.neu textarea.k-eingabe,
+.neu .k-feld textarea {
+  height: auto;
+  min-height: 4.5rem;
+  padding: 0.45rem 0.6rem;
+  resize: vertical;
+  line-height: 1.45;
+}
+.neu .k-eingabe::placeholder {
+  color: var(--k-text-3);
+}
+.neu .k-eingabe:hover,
+.neu .k-feld input:hover,
+.neu .k-feld select:hover,
+.neu .k-feld textarea:hover {
+  border-color: var(--k-schwarz);
+}
+.neu .k-eingabe:focus-visible,
+.neu .k-feld input:focus-visible,
+.neu .k-feld select:focus-visible,
+.neu .k-feld textarea:focus-visible {
+  border-color: var(--k-info);
+  box-shadow: 0 0 0 3px rgb(29 79 140 / 0.25);
+}
+.neu .k-eingabe[aria-invalid="true"] {
+  border-color: var(--k-fehler);
+}
+.neu .k-eingabe:disabled,
+.neu .k-eingabe[readonly] {
+  background: var(--k-flaeche-2);
+  color: var(--k-text-2);
+}
+.neu .k-eingabe-zahl {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.neu .k-feldhinweis {
+  font-size: var(--k-text-xs);
+  color: var(--k-text-3);
+}
+.neu .k-feldfehler {
+  font-size: var(--k-text-xs);
+  color: var(--k-fehler);
+  font-weight: 600;
+}
+.neu .k-mit-einheit {
+  position: relative;
+}
+.neu .k-mit-einheit .k-eingabe {
+  padding-right: 2.1rem;
+}
+.neu .k-einheit {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--k-text-3);
+  font-size: var(--k-text-s);
+  pointer-events: none;
+}
+
+.neu .k-schalter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--k-a2);
+  min-height: var(--k-feld-hoehe);
+  cursor: pointer;
+  user-select: none;
+}
+.neu .k-schalter input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--k-marke);
+  cursor: pointer;
+  flex: none;
+}
+
+/* ------------------------------------------------------------ Karte */
+.neu .k-karte {
+  background: var(--k-flaeche);
+  border: 1px solid var(--k-rahmen);
+  border-radius: var(--k-radius-gross);
+  box-shadow: var(--k-schatten);
+}
+.neu .k-karte-kopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-a2) var(--k-a3);
+  padding: var(--k-a3) var(--k-a4);
+  border-bottom: 1px solid var(--k-flaeche-3);
+}
+.neu .k-karte-titel {
+  font-size: var(--k-text-l);
+  font-weight: 600;
+}
+.neu .k-karte-inhalt {
+  padding: var(--k-a4);
+}
+.neu .k-untertitel {
+  font-size: var(--k-text-s);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--k-text-2);
+  font-family: var(--k-schrift);
+}
+
+/* ------------------------------------------------------------ Tabelle */
+.neu .k-tabelle-rahmen {
+  overflow-x: auto;
+}
+.neu .k-tabelle {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--k-text-m);
+}
+.neu .k-tabelle th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-size: var(--k-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--k-text-2);
+  background: var(--k-flaeche-2);
+  border-bottom: 1px solid var(--k-rahmen);
+  white-space: nowrap;
+}
+.neu .k-tabelle td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--k-flaeche-3);
+  vertical-align: middle;
+}
+.neu .k-tabelle tbody tr:last-child td {
+  border-bottom: 0;
+}
+.neu .k-tabelle tbody tr:hover td {
+  background: var(--k-flaeche-2);
+}
+.neu .k-tabelle th.k-rechts,
+.neu .k-tabelle td.k-rechts {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.neu .k-tabelle tfoot td {
+  font-weight: 700;
+  background: var(--k-flaeche-2);
+  border-top: 1px solid var(--k-rahmen);
+  border-bottom: 0;
+}
+/* Eingabetabellen (Positionen): dichte Zellen, Felder füllen die Zelle */
+.neu .k-tabelle-eingabe td {
+  padding: 0.25rem 0.3rem;
+}
+.neu .k-tabelle-eingabe th {
+  padding: 0.4rem 0.5rem;
+}
+.neu .k-tabelle-eingabe tbody tr:hover td {
+  background: transparent;
+}
+
+/* ------------------------------------------------------------ Abzeichen */
+.neu .k-abzeichen {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: var(--k-text-xs);
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--k-flaeche-3);
+  color: var(--k-text-2);
+}
+.neu .k-abzeichen-erfolg {
+  background: var(--k-erfolg-hell);
+  color: var(--k-erfolg);
+}
+.neu .k-abzeichen-warnung {
+  background: var(--k-warnung-hell);
+  color: var(--k-warnung);
+}
+.neu .k-abzeichen-fehler {
+  background: var(--k-fehler-hell);
+  color: var(--k-fehler);
+}
+.neu .k-abzeichen-info {
+  background: var(--k-info-hell);
+  color: var(--k-info);
+}
+.neu .k-abzeichen-marke {
+  background: var(--k-marke-hell);
+  color: var(--k-marke-dunkel);
+}
+
+/* ------------------------------------------------------------ Hinweis */
+.neu .k-hinweis {
+  display: flex;
+  gap: var(--k-a3);
+  padding: var(--k-a3) var(--k-a4);
+  border-radius: var(--k-radius);
+  border: 1px solid var(--k-info);
+  border-left-width: 4px;
+  background: var(--k-info-hell);
+  color: var(--k-text);
+}
+.neu .k-hinweis-erfolg {
+  border-color: var(--k-erfolg);
+  background: var(--k-erfolg-hell);
+}
+.neu .k-hinweis-warnung {
+  border-color: var(--k-warnung);
+  background: var(--k-warnung-hell);
+}
+.neu .k-hinweis-fehler {
+  border-color: var(--k-fehler);
+  background: var(--k-fehler-hell);
+}
+.neu .k-hinweis-titel {
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------ Seitenkopf, Leerzustand, Blättern */
+.neu .k-seitenkopf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--k-a3);
+  margin-bottom: var(--k-a4);
+}
+.neu .k-seitenkopf h1 {
+  font-size: var(--k-text-xxl);
+  font-weight: 700;
+}
+.neu .k-seitenkopf-unter {
+  color: var(--k-text-2);
+  margin-top: 0.15rem;
+}
+.neu .k-leer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--k-a2);
+  padding: var(--k-a6) var(--k-a4);
+  text-align: center;
+  color: var(--k-text-2);
+}
+.neu .k-leer-titel {
+  font-size: var(--k-text-l);
+  font-weight: 600;
+  color: var(--k-schwarz);
+}
+.neu .k-blaettern {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--k-a3);
+  padding: var(--k-a3) var(--k-a4);
+  border-top: 1px solid var(--k-flaeche-3);
+  color: var(--k-text-2);
+}
+
+/* ------------------------------------------------------------ Dialog */
+.neu dialog.k-dialog {
+  width: min(44rem, calc(100vw - 2rem));
+  max-height: min(40rem, calc(100vh - 2rem));
+  padding: 0;
+  border: 1px solid var(--k-rahmen);
+  border-radius: var(--k-radius-gross);
+  box-shadow: var(--k-schatten-gross);
+  color: var(--k-text);
+  background: var(--k-flaeche);
+  margin: auto;
+}
+.neu dialog.k-dialog::backdrop {
+  background: rgb(0 0 0 / 0.4);
+}
+.neu dialog.k-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ------------------------------------------------------------ Angebotsmaske */
+.neu .k-maske {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 17.5rem;
+  gap: var(--k-a5);
+  align-items: start;
+}
+.neu .k-abschnittsleiste {
+  position: sticky;
+  top: var(--k-kopf-hoehe);
+  z-index: 20;
+  display: flex;
+  gap: 2px;
+  margin: 0 calc(-1 * var(--k-a5)) var(--k-a4);
+  padding: var(--k-a2) var(--k-a5);
+  overflow-x: auto;
+  background: var(--k-flaeche);
+  border-bottom: 1px solid var(--k-rahmen);
+  scrollbar-width: thin;
+}
+.neu .k-abschnittsleiste a {
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--k-radius);
+  color: var(--k-text-2);
+  font-size: var(--k-text-s);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.neu .k-abschnittsleiste a:hover {
+  background: var(--k-flaeche-3);
+  color: var(--k-schwarz);
+}
+.neu .k-abschnittsleiste a[aria-current="true"] {
+  background: var(--k-schwarz);
+  color: var(--k-text-invers);
+}
+.neu .k-abschnitt {
+  scroll-margin-top: calc(var(--k-kopf-hoehe) + 3.75rem);
+}
+.neu .k-summenleiste {
+  position: sticky;
+  top: calc(var(--k-kopf-hoehe) + 3.75rem);
+}
+.neu .k-summenzeile {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--k-a3);
+  padding: 0.2rem 0;
+  font-variant-numeric: tabular-nums;
+}
+.neu .k-summenzeile-gesamt {
+  margin-top: var(--k-a2);
+  padding-top: var(--k-a2);
+  border-top: 2px solid var(--k-schwarz);
+  font-size: var(--k-text-xl);
+  font-weight: 700;
+  font-family: var(--k-schrift-titel);
+}
+.neu .k-fussleiste {
+  display: none;
+}
+@media (max-width: 1279px) {
+  .neu .k-maske {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .neu .k-summenleiste {
+    display: none;
+  }
+  .neu .k-fussleiste {
+    position: sticky;
+    bottom: 0;
+    z-index: 25;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--k-a2) var(--k-a4);
+    margin: var(--k-a4) calc(-1 * var(--k-a5)) calc(-1 * var(--k-a5));
+    padding: var(--k-a2) var(--k-a5);
+    background: var(--k-flaeche);
+    border-top: 1px solid var(--k-rahmen);
+    box-shadow: 0 -4px 12px rgb(0 0 0 / 0.08);
+  }
+}
+@media (max-width: 1023px) {
+  .neu .k-abschnittsleiste {
+    margin-left: calc(-1 * var(--k-a3));
+    margin-right: calc(-1 * var(--k-a3));
+    padding-left: var(--k-a3);
+    padding-right: var(--k-a3);
+  }
+  .neu .k-fussleiste {
+    margin: var(--k-a4) calc(-1 * var(--k-a3)) calc(-1 * var(--k-a4));
+    padding: var(--k-a2) var(--k-a3);
+  }
+}
+.neu .k-speicherstatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: var(--k-text-s);
+  font-weight: 600;
+  min-height: 1.25rem;
+}
+.neu .k-speicherstatus::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--k-rahmen-stark);
+  flex: none;
+}
+.neu .k-speicherstatus[data-zustand="offen"] {
+  color: var(--k-warnung);
+}
+.neu .k-speicherstatus[data-zustand="offen"]::before {
+  background: #d98e00;
+}
+.neu .k-speicherstatus[data-zustand="gespeichert"] {
+  color: var(--k-erfolg);
+}
+.neu .k-speicherstatus[data-zustand="gespeichert"]::before {
+  background: var(--k-erfolg);
+}
+.neu .k-speicherstatus[data-zustand="fehler"] {
+  color: var(--k-fehler);
+}
+.neu .k-speicherstatus[data-zustand="fehler"]::before {
+  background: var(--k-fehler);
+}
+
+/* Raster für Formularfelder: füllt die Breite, bricht sauber um */
+.neu .k-raster {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--k-a3);
+}
+.neu .k-raster > * {
+  grid-column: span 12;
+}
+@media (min-width: 640px) {
+  .neu .k-raster > .k-s2 { grid-column: span 2; }
+  .neu .k-raster > .k-s3 { grid-column: span 3; }
+  .neu .k-raster > .k-s4 { grid-column: span 4; }
+  .neu .k-raster > .k-s5 { grid-column: span 5; }
+  .neu .k-raster > .k-s6 { grid-column: span 6; }
+  .neu .k-raster > .k-s7 { grid-column: span 7; }
+  .neu .k-raster > .k-s8 { grid-column: span 8; }
+  .neu .k-raster > .k-s9 { grid-column: span 9; }
+  .neu .k-raster > .k-s10 { grid-column: span 10; }
+}
+@media (max-width: 639px) {
+  .neu .k-raster > .k-s2,
+  .neu .k-raster > .k-s3 { grid-column: span 6; }
+}

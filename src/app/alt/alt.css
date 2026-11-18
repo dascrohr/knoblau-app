@@ -1,0 +1,143 @@
+/* Altansicht: eigener, klassischer Fensterstil. Alles hängt an .alt, damit nichts in die Neuansicht ausstrahlt. */
+.alt {
+  --flaeche: #d4d0c8;
+  --hell: #ece9d8;
+  --licht: #ffffff;
+  --schatten: #808080;
+  --dunkel: #404040;
+  --blau: #0a246a;
+  min-width: 1100px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--flaeche);
+  color: #000;
+  font: 12px/1.35 Tahoma, "Segoe UI", Arial, sans-serif;
+}
+.alt *, .alt *::before, .alt *::after { box-sizing: border-box; }
+.alt a { color: #00c; text-decoration: underline; }
+.alt h1 { font-size: 13px; font-weight: bold; margin: 0; }
+
+/* Hinweisbalken */
+.alt .hinweis { display: flex; align-items: center; gap: 12px; padding: 3px 8px; background: #ffe98a; border-bottom: 1px solid #b59a1c; }
+.alt .hinweis strong { font-weight: bold; }
+.alt .hinweis .rechts { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.alt .umschalter { display: flex; gap: 2px; }
+.alt .umschalter a { padding: 1px 8px; border: 1px solid #8a7a20; background: #fff6c4; color: #000; text-decoration: none; }
+.alt .umschalter a.aktiv { background: var(--blau); color: #fff; font-weight: bold; }
+
+/* Menüleiste */
+.alt .menue { display: flex; margin: 0; padding: 1px 2px; list-style: none; background: var(--flaeche); border-bottom: 1px solid var(--schatten); box-shadow: 0 1px 0 var(--licht); }
+.alt .menue > li { position: relative; }
+.alt .menue > li > button { padding: 2px 8px; background: none; border: 1px solid transparent; font: inherit; cursor: default; }
+.alt .menue > li:hover > button, .alt .menue > li:focus-within > button { background: var(--blau); color: #fff; }
+.alt .menue ul { display: none; position: absolute; left: 0; top: 100%; z-index: 50; min-width: 250px; max-height: 80vh; overflow-y: auto; margin: 0; padding: 2px; list-style: none; background: var(--flaeche); border: 1px solid; border-color: var(--licht) var(--dunkel) var(--dunkel) var(--licht); box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.4); }
+.alt .menue > li:hover > ul, .alt .menue > li:focus-within > ul { display: block; }
+.alt .menue ul li > a, .alt .menue ul li > span { display: block; padding: 2px 18px; color: #000; text-decoration: none; white-space: nowrap; }
+.alt .menue ul li > a:hover, .alt .menue ul li > a:focus { background: var(--blau); color: #fff; outline: none; }
+.alt .menue ul li > span[aria-disabled] { color: var(--schatten); text-shadow: 1px 1px 0 var(--licht); }
+.alt .menue ul li.gruppe-titel > span { font-weight: bold; color: #000; padding-left: 6px; text-shadow: none; }
+.alt .menue ul li.trenner { height: 0; margin: 3px 2px; border-top: 1px solid var(--schatten); border-bottom: 1px solid var(--licht); }
+.alt .menue ul li.unter > span, .alt .menue ul li.unter > a { padding-left: 32px; }
+
+/* Symbolleiste */
+.alt .leiste { display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 3px 4px; border-bottom: 1px solid var(--schatten); box-shadow: 0 1px 0 var(--licht); }
+.alt .leiste .trenn { width: 2px; height: 20px; margin: 0 4px; border-left: 1px solid var(--schatten); border-right: 1px solid var(--licht); }
+.alt .leiste form { display: inline-flex; }
+.alt .leiste .meldung { margin-left: 10px; }
+
+/* Knöpfe */
+.alt .knopf, .alt button.knopf, .alt a.knopf { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 22px; padding: 1px 9px; background: var(--flaeche); color: #000; font: inherit; text-decoration: none; white-space: nowrap; cursor: default; border: 1px solid; border-color: var(--licht) var(--dunkel) var(--dunkel) var(--licht); box-shadow: inset -1px -1px 0 var(--schatten), inset 1px 1px 0 var(--hell); }
+.alt .knopf:active:not(:disabled):not([aria-disabled]) { border-color: var(--dunkel) var(--licht) var(--licht) var(--dunkel); box-shadow: inset 1px 1px 0 var(--schatten); }
+.alt .knopf:focus-visible { outline: 1px dotted #000; outline-offset: -4px; }
+.alt .knopf:disabled, .alt .knopf[aria-disabled="true"] { color: var(--schatten); text-shadow: 1px 1px 0 var(--licht); }
+.alt .knopf.gedrueckt { border-color: var(--dunkel) var(--licht) var(--licht) var(--dunkel); box-shadow: inset 1px 1px 0 var(--schatten); background: var(--hell); font-weight: bold; }
+.alt .knopf.klein { min-height: 18px; padding: 0 5px; }
+
+/* Inhalt, Statusleiste */
+.alt .inhalt { flex: 1; padding: 6px; }
+.alt .status { display: flex; gap: 2px; padding: 2px; border-top: 1px solid var(--licht); }
+.alt .status > span { padding: 1px 8px; border: 1px solid; border-color: var(--schatten) var(--licht) var(--licht) var(--schatten); min-width: 150px; }
+.alt .status > span:first-child { flex: 1; }
+.alt .meldung { padding: 1px 8px; border: 1px solid var(--schatten); background: var(--hell); }
+.alt .meldung.ok { background: #d8f0d0; border-color: #3a7a2a; }
+.alt .meldung.fehler { background: #ffd9d4; border-color: #a02010; font-weight: bold; }
+.alt .hinweistext { color: #333; font-style: italic; margin: 4px 0; }
+
+/* Felder */
+.alt input:not([type="checkbox"]):not([type="radio"]), .alt select, .alt textarea { height: 20px; padding: 1px 3px; background: #fff; color: #000; font: inherit; border: 1px solid; border-color: var(--schatten) var(--licht) var(--licht) var(--schatten); box-shadow: inset 1px 1px 0 var(--dunkel); border-radius: 0; min-width: 0; }
+.alt textarea { height: auto; width: 100%; resize: vertical; line-height: 1.3; }
+.alt select { padding: 0 1px; }
+.alt input:focus, .alt select:focus, .alt textarea:focus { outline: 1px solid var(--blau); outline-offset: -1px; }
+.alt input[readonly], .alt textarea[readonly], .alt input:disabled, .alt select:disabled, .alt textarea:disabled { background: var(--hell); color: #000; opacity: 1; }
+.alt input.berechnet { background: var(--flaeche); font-weight: bold; }
+.alt input.zahl { text-align: right; }
+.alt input[type="checkbox"] { width: 13px; height: 13px; margin: 0; accent-color: #404040; }
+.alt .feld { display: grid; grid-template-columns: var(--lb, 120px) minmax(0, 1fr); align-items: center; gap: 4px; margin-bottom: 2px; }
+.alt .feld > label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alt .feld > input, .alt .feld > select { width: 100%; }
+.alt .feld.kurz > input { width: 90px; }
+.alt .feld.kurz > input[type="date"] { width: 124px; }
+.alt .feld.oben { grid-template-columns: 1fr; }
+.alt .haken { display: flex; align-items: center; gap: 5px; margin-bottom: 2px; min-height: 20px; }
+.alt fieldset.gruppe { margin: 0 0 6px; padding: 4px 8px 6px; border: 1px solid var(--schatten); box-shadow: inset 1px 1px 0 var(--licht), 1px 1px 0 var(--licht); min-width: 0; }
+.alt fieldset.gruppe > legend { padding: 0 4px; font-weight: normal; color: #003; }
+.alt .spalten { display: grid; gap: 8px; align-items: start; }
+.alt .spalten.s2 { grid-template-columns: 1fr 1fr; }
+.alt .spalten.s3 { grid-template-columns: 1fr 1fr 1fr; }
+.alt .spalten.s4 { grid-template-columns: repeat(4, 1fr); }
+.alt .spalten.s31 { grid-template-columns: 3fr 1.15fr; }
+.alt .reihe { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 4px; }
+.alt .plzort { display: grid; grid-template-columns: var(--lb, 120px) 44px 64px minmax(0, 1fr); gap: 4px; align-items: center; margin-bottom: 2px; }
+.alt .plzort input { width: 100%; }
+
+/* Reiter */
+.alt .kopfzeile { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; padding: 3px 6px; margin-bottom: 6px; background: var(--hell); border: 1px solid var(--schatten); }
+.alt .kopfzeile b { font-weight: bold; }
+.alt .reiter-leiste { display: flex; flex-wrap: wrap; padding-left: 2px; position: relative; top: 1px; }
+.alt .reiter-leiste button { margin-top: 2px; padding: 2px 7px 3px; background: var(--flaeche); font: inherit; cursor: default; border: 1px solid; border-color: var(--licht) var(--dunkel) transparent var(--licht); border-radius: 3px 3px 0 0; white-space: nowrap; }
+.alt .reiter-leiste button[aria-selected="true"] { margin-top: 0; padding-top: 4px; background: var(--hell); font-weight: bold; border-bottom-color: var(--hell); position: relative; z-index: 2; }
+.alt .reiter-leiste button:focus-visible { outline: 1px dotted #000; outline-offset: -3px; }
+.alt .reiter-blatt { padding: 8px; background: var(--hell); border: 1px solid; border-color: var(--licht) var(--dunkel) var(--dunkel) var(--licht); box-shadow: 1px 1px 0 var(--schatten); min-height: 420px; }
+
+/* Tabellen */
+.alt table.tab { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--schatten); }
+.alt table.tab th { padding: 2px 5px; background: var(--flaeche); font-weight: normal; text-align: left; white-space: nowrap; border: 1px solid; border-color: var(--licht) var(--schatten) var(--schatten) var(--licht); position: sticky; top: 0; }
+.alt table.tab td { padding: 1px 5px; border: 1px solid #c8c8c8; vertical-align: top; }
+.alt table.tab td.r, .alt table.tab th.r { text-align: right; white-space: nowrap; }
+.alt table.tab tr.klick { cursor: default; }
+.alt table.tab tr.klick:hover td, .alt table.tab tr.klick:focus td, .alt table.tab tr.gewaehlt td { background: var(--blau); color: #fff; }
+.alt table.tab tr.klick:hover a, .alt table.tab tr.klick:focus a, .alt table.tab tr.gewaehlt a { color: #fff; }
+.alt table.tab tfoot td { background: var(--hell); font-weight: bold; }
+.alt table.pos { width: 100%; border-collapse: collapse; }
+.alt table.pos th { padding: 0 3px 1px; font-weight: normal; text-align: left; white-space: nowrap; }
+.alt table.pos td { padding: 1px 2px; vertical-align: top; }
+.alt table.pos input { width: 100%; }
+.alt table.pos .nr { width: 22px; text-align: right; color: #444; padding-top: 3px; }
+.alt table.pos .w-z { width: 78px; }
+.alt table.pos .w-k { width: 58px; }
+.alt table.pos .w-b { width: 96px; }
+.alt table.pos .w-s { width: 30px; }
+.alt .rollen { overflow: auto; max-height: 62vh; border: 1px solid var(--schatten); }
+.alt .rollen table.tab { border: 0; }
+.alt .suchzeile { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-bottom: 6px; }
+.alt .suchzeile input[type="search"], .alt .suchzeile input[type="text"] { width: 260px; }
+.alt .blaettern { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.alt .summen { width: 100%; border-collapse: collapse; }
+.alt .summen td { padding: 1px 4px; }
+.alt .summen td:last-child { width: 130px; }
+.alt .summen input { width: 100%; }
+.alt .summen tr.stark td { font-weight: bold; border-top: 1px solid var(--schatten); padding-top: 3px; }
+
+/* Dialog */
+.alt .schleier { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.25); }
+.alt .dialog { width: 720px; max-width: 95vw; max-height: 85vh; display: flex; flex-direction: column; background: var(--flaeche); border: 1px solid; border-color: var(--licht) var(--dunkel) var(--dunkel) var(--licht); box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.5); }
+.alt .dialog .titel { display: flex; justify-content: space-between; align-items: center; padding: 2px 4px 2px 8px; background: linear-gradient(90deg, var(--blau), #a6caf0); color: #fff; font-weight: bold; }
+.alt .dialog .koerper { padding: 8px; overflow: auto; }
+
+@media print {
+  .alt { min-width: 0; background: #fff; }
+  .alt .hinweis, .alt .menue, .alt .leiste, .alt .status, .alt .reiter-leiste, .alt .nicht-drucken { display: none !important; }
+  .alt .reiter-blatt { border: 0; box-shadow: none; background: #fff; }
+  .alt .rollen { max-height: none; overflow: visible; }
+}
